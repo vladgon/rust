@@ -30,7 +30,6 @@ fn main() -> Result<(), Box<std::error::Error>> {
     };
     println!("Customer with Default {:#?}", cust);
     println!("Customer Serde JSON {}", serde_json::to_string(&cust)?);
-    println!("Customer Serde YAML \n{}\n", serde_yaml::to_string(&cust)?);
 //        {
 //        Ok(&res) => res as MySQL_MODEL::Customer,
 //        Err(e) => {
