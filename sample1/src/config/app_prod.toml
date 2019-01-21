@@ -1,0 +1,5 @@
+app_name = 'My App'
+db_user = 'vladg_prod'
+db_pwd = '123'
+[dp_prop]
+db_name='mysql'

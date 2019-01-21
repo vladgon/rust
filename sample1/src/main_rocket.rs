@@ -1,0 +1,51 @@
+#![feature(proc_macro_hygiene, decl_macro)]
+
+extern crate rand;
+#[macro_use]
+extern crate rocket;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+
+use sample::customer::Customer;
+
+mod sample;
+
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+#[get("/vlad")]
+fn vlad() -> &'static str { "Hello, world! Vlad" }
+
+fn main() {
+    rocket::ignite().mount("/", routes![index, vlad]).launch();
+
+    let customer = &mut Customer {
+        name: String::from("Vla"),
+        last_name: "ABC".to_string(),
+    };
+
+    println!("Name {:?}", customer);
+
+
+    print(&customer);
+    customer.name = String::from("New Name");
+    print(&customer);
+    let string = serde_json::to_string(&customer).unwrap();
+    println!("{:?}", string);
+    let from_str: Customer = serde_json::from_str(&string).expect("Bad State");
+
+    println!(" From Str {:?}", from_str);
+
+
+//
+    println!("Name {:?}", customer);
+}
+
+fn print(any: &Customer) {
+    println!("From Method print {:?}", any);
+}
