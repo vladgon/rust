@@ -17,8 +17,10 @@ use file::inside_file::{*};
 mod file;
 mod db;
 mod config;
+mod util;
 
-fn main() -> Result<(), Box<std::error::Error>> {
+
+fn main() -> util::ResultOK {
     let res_dev = config::load(config::Env::DEV);
     println!("Dev {:?}", res_dev);
     let res_prod = config::load(config::Env::PROD);
