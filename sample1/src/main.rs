@@ -3,8 +3,7 @@ extern crate rand;
 extern crate serde_derive;
 
 
-use std::sync::Arc;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
