@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use config::model::*;
 pub use config::model::ENV as Env;
 
@@ -14,6 +16,8 @@ pub fn load(env: ENV) -> Result<Config, serde_json::Error> {
 
 #[test]
 fn load_config() -> crate::util::ResultOK {
+    let map: HashMap<String, serde_json::Value> = serde_json::from_str(include_str!("app_dev.json")).unwrap();
+//    println!("Map {:?}", map.values().map(|v|v.to));
     assert!(serde_json::from_str::<Config>(include_str!("app_dev.json"))?.app_name.len() > 0);
     Ok(())
 }

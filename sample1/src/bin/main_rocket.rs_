@@ -10,7 +10,6 @@ extern crate serde_json;
 
 use sample::customer::Customer;
 
-mod sample;
 
 
 #[get("/")]

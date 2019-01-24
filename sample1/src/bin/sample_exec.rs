@@ -1,8 +1,9 @@
 extern crate rand;
-#[macro_use]
-extern crate serde_derive;
+extern crate sample1;
 
 
+use std::option::Option::None;
+use std::option::Option::Some;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
@@ -11,15 +12,31 @@ use rand::Rng;
 
 use db::model::model as MySQL_MODEL;
 use db::mysql::my_sql_service as My_SQL_Service;
-use file::inside_file::{*};
+use sample1::config as config;
+use sample1::db as db;
+use sample1::util as util;
 
-mod file;
-mod db;
-mod config;
-mod util;
+fn load_config() -> crate::util::ResultOK {
+    use std::collections::HashMap;
+    let _map: HashMap<String, serde_json::Value> = serde_json::from_str(include_str!("../config/app_prod.json")).unwrap();
 
+
+    let strMap: HashMap<&String, _> = _map.keys()
+        .map(|k|
+            (k, _map.get(k)
+                .map(|v| {
+                    v.as_str().unwrap_or("_object_")
+                }).unwrap()))
+        .collect();
+    println!("Map {:?}", strMap);
+    assert!(serde_json::from_str::<config::model::Config>(include_str!("../config/app_prod.json"))?.app_name.len() > 0);
+    Ok(())
+}
 
 fn main() -> util::ResultOK {
+    load_config();
+
+
     let res_dev = config::load(config::Env::DEV);
     println!("Dev {:?}", res_dev);
     let res_prod = config::load(config::Env::PROD);
@@ -69,10 +86,6 @@ fn main() -> util::ResultOK {
     let x = 5;
 
     print_number(x);
-
-    file::open_file();
-    xx();
-    file::inside::inside_file1::yy();
 
 //    println!("Guess {}", guess);
 

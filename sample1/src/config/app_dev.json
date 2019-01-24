@@ -2,7 +2,7 @@
   "app_name": "My App",
   "db_user": "vladg_dev",
   "db_pwd": "123",
-  "dp_prop": {
+  "dp_prop1": {
     "db_name": "mysql"
   }
 }

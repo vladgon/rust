@@ -1,1 +1,0 @@
-pub mod inside_file1;

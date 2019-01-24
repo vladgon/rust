@@ -1,4 +1,5 @@
 #[derive(Debug, Serialize, Deserialize, Default)]
+#[serde(default)]
 pub struct Config {
     pub app_name: String,
     pub db_user: String,
