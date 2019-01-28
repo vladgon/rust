@@ -3,5 +3,6 @@
 members = [
     "db",
     "web",
+    "util",
     "web_server"
 ]
