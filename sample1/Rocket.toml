@@ -1,0 +1,18 @@
+[development]
+address = "localhost"
+port = 8081
+#workers = [10]
+keep_alive = 5
+log = "normal"
+#secret_key = [randomly generated at launch]
+limits = { forms = 32768 }
+
+
+[staging]
+address = "localhost"
+port = 8082
+#workers = [10]
+keep_alive = 5
+log = "normal"
+#secret_key = [randomly generated at launch]
+limits = { forms = 32768 }
