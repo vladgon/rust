@@ -1,7 +1,8 @@
 [workspace]
 
 members = [
-    "db",
+    "db_diesel",
+    "db_mysql",
     "web",
     "util",
     "web_server"

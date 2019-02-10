@@ -2,6 +2,7 @@
 name = "sample1"
 version = "0.1.0"
 authors = ["vladgon <vladgon@gmail.com>"]
+#edition = "2018"
 
 
 #env = ["RUST_BACKTRACE = none"]

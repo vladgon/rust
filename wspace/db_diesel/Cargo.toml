@@ -1,0 +1,10 @@
+[package]
+name = "db_diesel"
+version = "0.1.0"
+authors = ["vladgon <valdgon@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+util = {path = "../util"}
+diesel = { version = "^1.4.1", features = ["mysql"] }
+dotenv = "0.13.0"

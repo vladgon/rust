@@ -1,4 +1,4 @@
-extern crate db;
+extern crate db_diesel as db;
 
 #[test]
 fn db_integration() {}
