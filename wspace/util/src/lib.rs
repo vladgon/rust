@@ -1,4 +1,7 @@
 ///
-///`Result` type with void and generic Error, mainly to support `?`shortcut
+///`Result` type with void and generic [`Error`], mainly to support `?`shortcut
 ///
-pub type ResultOK = Result<(), Box<std::error::Error>>;
+///
+/// [`Error`]: std::error::Error
+///
+pub type ResultOK = Result<(), dyn std::error::Error>;

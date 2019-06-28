@@ -5,5 +5,5 @@ members = [
     "db_mysql",
     "web",
     "util",
-    "web_server"
+    "web_server",
 ]
