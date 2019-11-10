@@ -5,4 +5,3 @@ authors = ["vladgon <valdgon@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-gui = "0.2.2"

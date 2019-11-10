@@ -13,8 +13,10 @@ struct Str<'a> {
     name: &'a str,
 }
 
+#[allow(dead_code)]
 fn get_ref<'a>(st: &'a Str) -> &'a Str<'a> { st }
 
+#[allow(dead_code)]
 fn get_ref1(_st: Str) -> Str<'_> { Str { name: "asd" } }
 
 //fn substr(s: &str) -> &str {s}

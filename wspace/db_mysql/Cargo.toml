@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 util = {path = "../util"}
-dotenv = "0.13.0"
+dotenv = "0.15.0"
