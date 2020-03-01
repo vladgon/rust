@@ -1,4 +1,4 @@
-extern crate dotenv;
+
 
 #[cfg(test)]
 mod test {

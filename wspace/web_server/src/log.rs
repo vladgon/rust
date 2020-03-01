@@ -8,7 +8,7 @@ pub enum LogLevel {
 }
 
 impl fmt::Display for LogLevel {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             LogLevel::Warn => write!(f, "warning"),
             LogLevel::Error => write!(f, "error"),
