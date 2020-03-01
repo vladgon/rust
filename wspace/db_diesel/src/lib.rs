@@ -29,7 +29,7 @@ pub fn establish_connection() -> MysqlConnection {
 
 
 pub fn create_post(conn: &MysqlConnection, title: &str, body: &str) -> Result<Post, diesel::result::Error> {
-    use schema::posts::dsl::{posts, id};
+    use crate::schema::posts::dsl::{posts, id};
     let new_post = NewPost {
         title,
         body,
