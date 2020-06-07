@@ -17,3 +17,19 @@ create table posts
   constraint id
     unique (id)
 );
+
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (1, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (2, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (3, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (4, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (5, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (6, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (7, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (8, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (9, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (10, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (11, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (12, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (13, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (14, 'vlad', 'Post body', null);
+INSERT INTO webgrid.posts (id, title, body, published) VALUES (15, 'vlad', 'Post body', null);

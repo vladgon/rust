@@ -1,8 +1,6 @@
 #[macro_use]
 extern crate diesel;
 
-use std::sync::Once;
-
 use diesel::prelude::*;
 
 use self::models::{NewPost, Post};
@@ -11,9 +9,6 @@ pub mod schema;
 pub mod models;
 pub mod util;
 pub mod config;
-
-
-static START: Once = Once::new();
 
 
 pub fn create_post(conn: &MysqlConnection, title: &str, body: &str) -> Result<Post, diesel::result::Error> {
