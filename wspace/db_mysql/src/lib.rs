@@ -1,5 +1,3 @@
-
-
 #[cfg(test)]
 mod test {
     #[test]
@@ -25,6 +23,6 @@ mod test {
             ("Iceland", 10)].iter().cloned().collect();
 
 
-        println!("Config {:?}", map);
+        println!("config {:?}", map);
     }
 }
