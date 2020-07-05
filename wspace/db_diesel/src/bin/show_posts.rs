@@ -1,4 +1,3 @@
-#![feature(try_trait)]
 extern crate db_diesel;
 
 use std::error::Error;
@@ -6,27 +5,27 @@ use std::error::Error;
 use diesel::prelude::*;
 use tracing::debug;
 
-use db_diesel::config::init;
+use db_diesel::config;
+use db_diesel::models::Post;
+use db_diesel::util::connection::establish_connection;
 
-use crate::util::connection::establish_connection;
-
-use self::db_diesel::*;
-use self::models::*;
+use crate::config::init;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    init();
-    debug!("Got Connection URL {:?}", config::db_url());
-    use db_diesel::schema::posts::dsl::posts;
+	init();
 
-    let connection = establish_connection()?;
-    let results = posts
-        // .filter(published.eq(true))
-        .limit(5)
-        .load::<Post>(&connection)?;
+	debug!("Got Connection URL {:?}", config::db_url());
+	use db_diesel::schema::posts::dsl::posts;
 
-    debug!("Displaying {} posts", results.len());
-    for post in results {
-        debug!("{:?}, {:?}", post.title, post.body.unwrap_or_default());
-    }
-    Ok(())
+	let connection = establish_connection()?;
+	let results = posts
+		// .filter(published.eq(true))
+		.limit(5)
+		.load::<Post>(&connection)?;
+
+	debug!("Displaying {} posts", results.len());
+	for post in results {
+		debug!("{:?}, {:?}", post.title, post.body.unwrap_or_default());
+	}
+	Ok(())
 }
