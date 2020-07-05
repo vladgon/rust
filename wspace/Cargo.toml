@@ -6,4 +6,5 @@ members = [
     "web",
     "util",
     "web_server",
+    "wasm",
 ]
