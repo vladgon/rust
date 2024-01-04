@@ -2,12 +2,12 @@
 name = "db_diesel"
 version = "0.1.0"
 authors = ["vladgon <valdgon@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-diesel = { version = "1.4.4", features = ["mysql"] }
+diesel = { version = "2.1.4", features = ["mysql"] }
 dotenv = "0.15.0"
 util = {path = "../util"}
 tracing = "^0.1"
-tracing-subscriber = "0.2.5"
-tracing-appender = "0.1"
+tracing-subscriber = "^0.3"
+tracing-appender = "^0.2"

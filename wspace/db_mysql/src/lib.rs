@@ -7,11 +7,11 @@ mod test {
             println!("DB_URL: {}", lang);
         } else {
             println!("Couldn't read DB_URL");
-        };
+        }
         match dotenv::var("DB_URL") {
             Ok(lang) => println!("DB_URL: {}", lang),
             Err(e) => println!("Couldn't read DB_URL ({:?})", e),
-        };
+        }
     }
 
     #[test]

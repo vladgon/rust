@@ -21,23 +21,23 @@ use crate::config;
 /// ```
 
 pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
-	tracing::trace!("Got Connection {:?}", dotenv::var("DATABASE_URL").unwrap());
-	config::db_url().establish_connection()
+    tracing::trace!("Got Connection {:?}", dotenv::var("DATABASE_URL").unwrap());
+    config::db_url().establish_connection()
 }
 
 pub trait MySqlConnectionT {
-	fn establish_connection(&self) -> ConnectionResult<MysqlConnection>;
+    fn establish_connection(&self) -> ConnectionResult<MysqlConnection>;
 }
 
 impl MySqlConnectionT for String {
-	fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
-		MysqlConnection::establish(self)
-	}
+    fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
+        MysqlConnection::establish(self)
+    }
 }
 
-impl<E: Debug> MySqlConnectionT for core::result::Result<String, E> {
-	fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
-		MysqlConnection::establish(self.as_ref()
-																	 .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?)
-	}
+impl<E: Debug> MySqlConnectionT for Result<String, E> {
+    fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
+        MysqlConnection::establish(self.as_ref()
+            .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?)
+    }
 }

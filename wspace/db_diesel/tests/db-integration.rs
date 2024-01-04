@@ -28,7 +28,7 @@ mod test {
     #[ignore]
     fn insert_post() -> Result<(), Box<dyn Error>> {
         config::init();
-        tracing::debug!("Inserted {:?}", create_post(&establish_connection()?, "vlad", "Post body"));
+        tracing::debug!("Inserted {:?}", create_post(&mut establish_connection()?, "vlad", "Post body"));
         Ok(())
     }
 }

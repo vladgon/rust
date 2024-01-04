@@ -17,11 +17,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 	debug!("Got Connection URL {:?}", config::db_url());
 	use db_diesel::schema::posts::dsl::posts;
 
-	let connection = establish_connection()?;
+	let mut connection = establish_connection()?;
 	let results = posts
 		// .filter(published.eq(true))
 		.limit(5)
-		.load::<Post>(&connection)?;
+		.load::<Post>(&mut connection)?;
 
 	debug!("Displaying {} posts", results.len());
 	for post in results {

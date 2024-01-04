@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use tokio::task::{JoinError, JoinHandle};
 
-#[tokio::main(core_threads = 5)]
+#[tokio::main(flavor = "multi_thread", worker_threads = 5)]
 async fn main() -> Result<(), JoinError> {
     let hello = String::from("Hello");
     let hello = Arc::new(Mutex::new(hello));
@@ -19,6 +19,7 @@ async fn main() -> Result<(), JoinError> {
             })
         })
         .collect();
+
     let res1: Vec<i32> = tokio::task::spawn(async move {
         let mut res = vec![];
         for f in blocking_task {

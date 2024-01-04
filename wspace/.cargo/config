@@ -1,3 +1,3 @@
 [build]
-rustflags=["-L/usr/local/opt/mysql-client/lib"]
-rustdocflags=["-L/usr/local/opt/mysql-client/lib"]
+rustflags=["-L/opt/homebrew/opt/mysql-client/lib"]
+rustdocflags=["-L/opt/homebrew/opt/mysql-client/lib"]

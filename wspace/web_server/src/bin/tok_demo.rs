@@ -8,7 +8,7 @@ use tokio::task::JoinError;
 use tracing::instrument;
 
 #[instrument(err)]
-#[tokio::main(threaded_scheduler, core_threads = 5, max_threads = 10)]
+#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	tracing::debug!("Starting main");
 	tracing::debug!("Log env '{}'", env::var("RUST_LOG").unwrap_or("INFO".into()));
@@ -16,15 +16,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	Ok(())
 }
 
-#[instrument(debug)]
+#[instrument(level = "debug")]
 fn main_man() -> Result<(), Box<dyn std::error::Error>> {
 	tracing_subscriber::fmt::init();
 	tracing::debug!("Starting main");
 	tracing::debug!("Log env '{}'", env::var("RUST_LOG").unwrap_or("INFO".into()));
-	tokio::runtime::Builder::new()
-		.threaded_scheduler()
-		.core_threads(5)
-		.max_threads(10)
+	tokio::runtime::Builder::new_multi_thread()
+		.worker_threads(5)
 		.build()?
 		.block_on(async {
 			println!("Res {:?}", demo_task().await);

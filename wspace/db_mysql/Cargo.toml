@@ -2,8 +2,8 @@
 name = "db_mysql"
 version = "0.1.0"
 authors = ["vladgon <valdgon@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-util = {path = "../util"}
+util = { path = "../util" }
 dotenv = "0.15.0"

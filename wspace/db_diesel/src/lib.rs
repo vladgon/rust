@@ -11,14 +11,14 @@ pub mod util;
 pub mod config;
 
 
-pub fn create_post(conn: &MysqlConnection, title: &str, body: &str) -> Result<Post, diesel::result::Error> {
-    use crate::schema::posts::dsl::{posts, id};
+pub fn create_post(conn: &mut MysqlConnection, title: &str, body: &str) -> Result<Post, diesel::result::Error> {
+    use crate::schema::posts::dsl::{id, posts};
     let new_post = NewPost {
         title,
         body,
     };
 
-    conn.transaction(|| {
+    conn.transaction(|conn| {
         diesel::insert_into(posts)
             .values(&new_post)
             .execute(conn)
