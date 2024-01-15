@@ -1,0 +1,5 @@
+appName: SampleApp
+db:
+  url: jdbc:mysql://localhost:3306/sample
+  user: vlad
+  password: vlad

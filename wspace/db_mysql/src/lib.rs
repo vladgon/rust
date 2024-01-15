@@ -1,5 +1,30 @@
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+struct Conf {
+    db: Db,
+}
+
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+struct Db {
+    url: Url,
+}
+
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+struct Url {
+    name: String,
+    path: String,
+}
+
 #[cfg(test)]
 mod test {
+    use config::{Config, File};
+
+    use crate::Conf;
+
     #[test]
     fn env() {
         assert!(dotenv::var("DB_URL").is_ok());
@@ -12,6 +37,19 @@ mod test {
             Ok(lang) => println!("DB_URL: {}", lang),
             Err(e) => println!("Couldn't read DB_URL ({:?})", e),
         }
+    }
+
+    #[test]
+    fn conf() {
+        let conf = Config::builder()
+            .add_source(File::with_name("./tests.yaml"))
+            .build()
+            .map(Config::try_deserialize::<Conf>)
+            .ok()
+            .unwrap();
+
+        println!("Config  - {:?}", conf);
+        println!("Name  - {:?}", conf.unwrap().db.url.name);
     }
 
     #[test]

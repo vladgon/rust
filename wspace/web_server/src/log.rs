@@ -11,7 +11,7 @@ impl fmt::Display for LogLevel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             LogLevel::Warn => write!(f, "warning"),
-            LogLevel::Error => write!(f, "error"),
+            LogLevel::Error => write!(f, "common"),
         }
     }
 }

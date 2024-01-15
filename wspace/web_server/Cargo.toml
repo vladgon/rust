@@ -5,8 +5,9 @@ authors = ["vladgon <valdgon@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-tokio={version="^1", features=["rt-multi-thread", "macros"]}
-futures="^0.3"
+tokio = { version = "^1", features = ["rt-multi-thread", "macros", "time"] }
+futures = "^0.3"
 tracing = "^0.1"
 tracing-subscriber = "^0.3"
-tracing-futures="^0.2"
+tracing-futures = "^0.2"
+rand = "0.8.5"

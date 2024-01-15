@@ -1,10 +1,12 @@
+use serde::Serialize;
+
 mod log;
 mod schema;
 mod util;
 
 
 fn main() {
-	//    test!("Test macro {}", "arg1");
+	//    tests!("Test macro {}", "arg1");
 	warn!("Test Warn1");
 	warn!("Test Warn2");
 

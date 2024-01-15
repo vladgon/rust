@@ -1,8 +1,9 @@
 [workspace]
 resolver = "2"
-members = [
+members = ["config",
     "db_diesel",
     "db_mysql",
     "util",
     "web_server",
+    "config",
 ]
