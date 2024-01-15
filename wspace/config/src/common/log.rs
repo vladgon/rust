@@ -1,23 +1,23 @@
 use std::env;
 
-use log::{debug, LevelFilter};
+use anyhow::bail;
+use anyhow::Result;
+use log::{debug, LevelFilter, SetLoggerError};
 
-use crate::common::error::Errors;
-
-pub fn init() -> Result<(), Errors> {
+pub fn init() -> Result<()> {
     env_logger::builder()
         .filter_level(get_log_level()?)
         .try_init()
         .map(|_| debug!("Log initialized"))
-        .map_err(Errors::from)
+        .map_err(SetLoggerError::into)
 }
 
-fn get_log_level() -> Result<LevelFilter, Errors> {
+fn get_log_level() -> Result<LevelFilter> {
     match env::var("RUST_LOG") {
         Ok(level) => LevelFilter::iter()
             .find(|s| s.as_str().eq_ignore_ascii_case(level.as_str()))
             .map(Ok)
-            .unwrap_or_else(|| Err(Errors::Init(format!("Log Level is invalid '{level}'")))),
+            .unwrap_or_else(|| bail!("Log Level is invalid '{level}'")),
         Err(_) => Ok(LevelFilter::Info),
     }
 }

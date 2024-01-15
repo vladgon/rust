@@ -19,7 +19,7 @@ pub fn init() {
             MAX_LEVEL
         });
 
-        println!("Setting Log Level '{}'", level.to_string());
+        println!("Setting Log Level '{}'", level);
         tracing_subscriber::fmt::fmt()
             .with_max_level(level)
             .init();

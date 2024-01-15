@@ -1,9 +1,11 @@
-#[derive(serde::Deserialize, Clone, Debug)]
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
 pub struct Model {
     pub db: DB,
 }
 
-#[derive(serde::Deserialize, Clone, Debug)]
+#[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct DB {
     pub url: String,
