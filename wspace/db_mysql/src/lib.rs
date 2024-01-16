@@ -54,13 +54,13 @@ mod test {
 
     #[test]
     fn include() {
-//    let res = std::include!("config.txt");
+//    let res = std::include!("wg_sample_app.txt");
         let map: std::collections::HashMap<_, _> = [
             ("Norway", 100),
             ("Denmark", 50),
             ("Iceland", 10)].iter().cloned().collect();
 
 
-        println!("config {:?}", map);
+        println!("wg_sample_app {:?}", map);
     }
 }

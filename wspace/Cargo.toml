@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
-members = ["config",
+members = [
     "db_diesel",
     "db_mysql",
-    "util",
+    "wg_util",
     "web_server",
-    "config",
+    "wg_sample_app"
 ]

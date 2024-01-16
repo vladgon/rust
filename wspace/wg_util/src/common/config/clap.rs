@@ -3,8 +3,8 @@ use clap::Parser;
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-pub struct MyArgs {
-    /// config files list
+pub struct AppConfigCLAP {
+    /// wg_sample_app files list
     #[arg(short, long, value_name = "FILE")]
     pub config_files: String,
 
@@ -13,7 +13,7 @@ pub struct MyArgs {
     pub env_override: Option<bool>,
 }
 
-impl MyArgs {
+impl AppConfigCLAP {
     pub fn init() -> Self {
         Self::parse()
     }

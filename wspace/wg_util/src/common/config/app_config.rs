@@ -33,7 +33,7 @@ fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
         })
         .with_context(|| format!(" path {:?}: {}",
                                  path.as_ref(),
-                                 "No extension, cannot derive the config format "))?
+                                 "No extension, cannot derive the wg_sample_app format "))?
 }
 
 pub trait ConfigInit {
