@@ -26,7 +26,3 @@ pub fn init() {
     })
 }
 
-pub fn db_url() -> Result<String, dotenv::Error> {
-    init();
-    dotenv::var("DB_URL")
-}

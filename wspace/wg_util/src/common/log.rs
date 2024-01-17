@@ -1,6 +1,6 @@
 use std::env;
 
-use anyhow::bail;
+use anyhow::Context;
 use anyhow::Result;
 use log::{debug, LevelFilter, SetLoggerError};
 
@@ -15,11 +15,11 @@ pub fn init() -> Result<()> {
 }
 
 fn get_log_level() -> Result<LevelFilter> {
-    match env::var(RUST_LOG) {
+    let level_filter = match env::var(RUST_LOG) {
         Ok(env_level) => LevelFilter::iter()
             .find(|s| s.as_str().eq_ignore_ascii_case(env_level.as_str()))
-            .map(Ok)
-            .unwrap_or_else(|| bail!("Log Level is invalid '{env_level}'")),
-        Err(_) => Ok(LevelFilter::Info),
-    }
+            .with_context(|| "Log Level is invalid '{env_level}'")?,
+        Err(_) => LevelFilter::Info,
+    };
+    anyhow::Ok(level_filter)
 }

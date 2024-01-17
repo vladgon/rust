@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use diesel::prelude::*;
 
-use crate::config;
+use wg_util::common::config::app_config;
 
 ///
 /// Establish Connection
@@ -15,14 +15,14 @@ use crate::config;
 /// assert!(establish_connection().unwrap().batch_execute("Select 1").is_ok(), "Cannot get Connection")
 ///```
 ///
-/// ```
-/// use db_diesel::config;
-/// assert!(config::db_url().is_ok(), "db_url")
+///```
+/// use wg_util::common::config::app_config;
+/// assert!(app_config::settings?.db.url, "db_url")
 /// ```
 
 pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
     tracing::trace!("Got Connection {:?}", dotenv::var("DATABASE_URL").unwrap());
-    config::db_url().establish_connection()
+    app_config::settings().unwrap().db.url.establish_connection()
 }
 
 pub trait MySqlConnectionT {
