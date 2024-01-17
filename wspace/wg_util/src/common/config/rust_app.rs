@@ -1,18 +1,15 @@
-use std::env;
-
-use log::debug;
+use log::{debug, LevelFilter};
 
 use crate::common;
 use crate::common::config::app_config::{AppConfig, ConfigInit};
 use crate::common::config::clap::AppConfigCLAP;
-use crate::common::log::RUST_LOG;
+use crate::Result;
 
-pub fn init() -> anyhow::Result<()> {
-    env::set_var(RUST_LOG, "DEBUG");
-    env::set_var("db.user", "vlad2");
-    common::log::init()?;
+pub fn init(default_level: LevelFilter, use_clap: bool) -> Result<()> {
+    common::log::init(default_level)?;
 
-    let args = AppConfigCLAP::init();
+    let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
+
     let files: Vec<&str> = args.config_files.as_str()
         .split(',')
         .collect();

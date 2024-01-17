@@ -1,7 +1,9 @@
 use std::fs;
 use std::path::Path;
 
-pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> anyhow::Result<()> {
+use crate::Result;
+
+pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> Result<()> {
     fs::create_dir_all(&destination)?;
     for entry in fs::read_dir(source)? {
         let entry = entry?;

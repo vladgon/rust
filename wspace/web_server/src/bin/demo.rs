@@ -1,5 +1,3 @@
-use core::result::Result;
-use std::error::Error;
 use std::sync::Arc;
 use std::sync::atomic::AtomicI16;
 use std::sync::atomic::Ordering::Relaxed;
@@ -10,7 +8,7 @@ use rand::random;
 use tokio::task::JoinError;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> wg_util::Result<()> {
     run_most_of().await?;
 
     // let hello = Arc::new(Mutex::new("hello"));

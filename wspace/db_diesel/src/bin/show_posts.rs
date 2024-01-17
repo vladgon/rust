@@ -1,18 +1,17 @@
 extern crate db_diesel;
 extern crate wg_util;
 
-use std::error::Error;
-
 use diesel::prelude::*;
-use tracing::debug;
+use log::debug;
+use log::LevelFilter::Debug;
 
 use db_diesel::models::Post;
 use db_diesel::util::connection::establish_connection;
 use wg_util::common::config::app_config;
+use wg_util::Result;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    // init();
-    wg_util::common::config::rust_app::init()?;
+fn main() -> Result<()> {
+    wg_util::common::config::rust_app::init(Debug, true)?;
     debug!("Got Connection URL {:?}", app_config::settings()?.db.url);
     use db_diesel::schema::posts::dsl::posts;
 

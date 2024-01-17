@@ -11,3 +11,4 @@ tracing = "^0.1"
 tracing-subscriber = "^0.3"
 tracing-futures = "^0.2"
 rand = "0.8.5"
+wg_util = { path = "../wg_util" }

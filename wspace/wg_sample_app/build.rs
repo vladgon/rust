@@ -2,9 +2,10 @@ use std::env;
 use std::env::current_dir;
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::Context;
 
 use wg_util::common::io::copy_recursively;
+use wg_util::Result;
 
 const RESOURCE_DIR: &str = "resources";
 

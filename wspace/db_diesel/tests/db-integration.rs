@@ -3,32 +3,29 @@ extern crate db_diesel as db;
 
 #[cfg(test)]
 mod test {
-    use std::error::Error;
+    use ctor::ctor;
+    use log::debug;
+    use log::LevelFilter::Debug;
 
-    use db::config;
     use db::create_post;
     use db::util::connection::establish_connection;
+    use wg_util::common::config::{app_config, rust_app};
+    use wg_util::Result;
+
+    #[ctor]
+    fn init() {
+        rust_app::init(Debug, false).unwrap();
+    }
 
     #[test]
     fn test_config() {
-        // let cd = &env::current_dir().unwrap();
-        config::init();
-        tracing::debug!("Test 1 {:?}", config::db_url());
-        tracing::debug!("Test 2 {:?}", config::db_url());
+        debug!("Test 1 {:?}", app_config::settings().map(|s|&s.db));
     }
 
-    #[test]
-    #[ignore]
-    fn db_integration() {
-        config::init();
-        tracing::debug!("{:?}",config::db_url());
-    }
 
     #[test]
-    #[ignore]
-    fn insert_post() -> Result<(), Box<dyn Error>> {
-        config::init();
-        tracing::debug!("Inserted {:?}", create_post(&mut establish_connection()?, "vlad", "Post body"));
+    fn insert_post() -> Result<()> {
+        debug!("Inserted {:?}", create_post(&mut establish_connection()?, "vlad", "Post body"));
         Ok(())
     }
 }

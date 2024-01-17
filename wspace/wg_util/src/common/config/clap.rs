@@ -14,7 +14,23 @@ pub struct AppConfigCLAP {
 }
 
 impl AppConfigCLAP {
-    pub fn init() -> Self {
+    ///Parses command line arguments
+    pub fn init_clap() -> Self {
         Self::parse()
+    }
+    pub fn init_no_clap(config_files: String, env_override: Option<bool>) -> Self {
+        Self {
+            config_files,
+            env_override,
+        }
+    }
+}
+
+impl Default for AppConfigCLAP {
+    fn default() -> Self {
+        Self {
+            config_files: String::from("../wg_sample_app/resources/app_config.yaml"),
+            env_override: Some(true),
+        }
     }
 }
