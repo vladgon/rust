@@ -1,0 +1,12 @@
+[package]
+name = "wg_kafka"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+kafka = "0"
+wg_util = { workspace = true }
+log = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+serde = { workspace = true }
+serde_json = { workspace = true }

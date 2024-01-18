@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use clap::Parser;
 
 /// Simple program to greet a person
@@ -24,12 +26,22 @@ impl AppConfigCLAP {
             env_override,
         }
     }
+
+    fn derive_path() -> String {
+        let path1 = Path::new("wg_sample_app/resources/app_config.yaml");
+        let path2 = Path::new("..").join(path1);
+        if path1.exists() {
+            path1.to_str().unwrap().to_string()
+        } else  {
+            path2.to_str().unwrap().to_string()
+        }
+    }
 }
 
 impl Default for AppConfigCLAP {
     fn default() -> Self {
         Self {
-            config_files: String::from("../wg_sample_app/resources/app_config.yaml"),
+            config_files: Self::derive_path(),
             env_override: Some(true),
         }
     }
