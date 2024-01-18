@@ -1,5 +1,4 @@
 use std::env;
-use std::error::Error;
 use std::ffi::OsStr;
 use std::ops::ControlFlow;
 use std::path::Path;
@@ -7,32 +6,30 @@ use std::sync::OnceLock;
 
 use anyhow::{bail, Context};
 use config::{Config, ConfigError, Environment, File, FileFormat, Map, Source};
-use config::FileFormat::{Ini, Json, Toml, Yaml};
+use config::FileFormat::Yaml;
 use log::debug;
 
 use crate::common::config::model::Model;
+use crate::Result;
 
 #[derive(Default)]
 pub struct AppConfig {}
 
 impl ConfigInit for AppConfig {}
 
-pub fn settings<'a>() -> Result<&'a Model, Box<dyn Error>> {
+pub fn settings<'a>() -> Result<&'a Model> {
     CONFIG.get().with_context(|| "Settings are not initialized, call AppConfig::default().init variant ".to_string())
         .map_err(anyhow::Error::into)
 }
 
 static CONFIG: OnceLock<Model> = OnceLock::new();
 
-fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat, Box<dyn Error>> {
+fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
     let res = path.as_ref().extension()
         .and_then(OsStr::to_str)
         .map(str::to_lowercase)
         .map(|ext| match ext.as_str() {
             "yaml" => Ok(Yaml),
-            "ini" => Ok(Ini),
-            "toml" => Ok(Toml),
-            "json" => Ok(Json),
             _ => bail!("Extension {ext} is not supported, path {}", path.as_ref().to_str().unwrap_or("no extension"))
         })
         .with_context(|| format!(" path {:?}: {}",
@@ -42,14 +39,14 @@ fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat, Box<dyn Error>> {
 }
 
 pub trait ConfigInit {
-    fn init_with_files<'a, T: AsRef<Path>>(&self, sources: &[T], env_override: bool) -> Result<&'a Model, Box<dyn Error>> {
+    fn init_with_files<'a, T: AsRef<Path>>(&self, sources: &[T], env_override: bool) -> Result<&'a Model> {
         let t2: Vec<(&T, bool)> = sources.iter()
             .map(|t| (t, true))
             .collect();
         self.init_with_files_and_required(&t2, env_override)
     }
 
-    fn init_with_files_and_required<'a, T: AsRef<Path>>(&self, sources: &[(T, bool)], env_override: bool) -> Result<&'a Model, Box<dyn Error>> {
+    fn init_with_files_and_required<'a, T: AsRef<Path>>(&self, sources: &[(T, bool)], env_override: bool) -> Result<&'a Model> {
         let sources = sources.iter()
             .try_fold(Ok(Vec::new()),
                       |res, t2| {
@@ -74,7 +71,7 @@ pub trait ConfigInit {
         self.init_with_sources(sources, env_override)
     }
 
-    fn init_with_sources<'a, T: Source + Send + Sync + 'static>(&self, sources: Vec<T>, env_override: bool) -> Result<&'a Model, Box<dyn Error>> {
+    fn init_with_sources<'a, T: Source + Send + Sync + 'static>(&self, sources: Vec<T>, env_override: bool) -> Result<&'a Model> {
         assert!(CONFIG.get().is_none(), "CONFIG is already initialized");
 
         let mut builder = sources.into_iter()

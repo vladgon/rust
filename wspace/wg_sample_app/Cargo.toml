@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wg_util = { path = "../wg_util" }
-anyhow = "1"
-log = "0"
+wg_util = { workspace = true }
+anyhow = { workspace = true }
+log = { workspace = true }
 
 [build-dependencies]
-anyhow = "1"
-wg_util = { path = "../wg_util" }
+anyhow = { workspace = true }
+wg_util = { workspace = true }

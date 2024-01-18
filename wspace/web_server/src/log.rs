@@ -1,6 +1,5 @@
 use std::fmt;
 
-//#[derive(Copy, Clone)]
 #[allow(dead_code)]
 pub enum LogLevel {
     Warn,
@@ -10,8 +9,8 @@ pub enum LogLevel {
 impl fmt::Display for LogLevel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            LogLevel::Warn => write!(f, "warning"),
-            LogLevel::Error => write!(f, "common"),
+            LogLevel::Warn => f.write_str("warning"),
+            LogLevel::Error => f.write_str("common"),
         }
     }
 }

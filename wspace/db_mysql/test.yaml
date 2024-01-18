@@ -1,6 +1,0 @@
-db:
-  url:
-    name: mysql://localhost:3306/sample
-    path: mysql
-#DB_URL=jdbc:mysql://localhost:3306/sample
-#db.url=jdbc:mysql://localhost:3306/sample

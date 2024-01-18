@@ -2,8 +2,17 @@
 resolver = "2"
 members = [
     "db_diesel",
-    "db_mysql",
     "wg_util",
     "web_server",
     "wg_sample_app"
 ]
+
+[workspace.dependencies]
+wg_util = { path = "wg_util" }
+anyhow = "1"
+log = "0"
+config = "0.13"
+env_logger = "0.10"
+serde = "1"
+clap = "4"
+diesel = "2"
