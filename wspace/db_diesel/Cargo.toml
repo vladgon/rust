@@ -10,4 +10,4 @@ wg_util = { workspace = true }
 log = { workspace = true }
 
 [dev-dependencies]
-ctor = "0.2.6"
+ctor = { workspace = true }
