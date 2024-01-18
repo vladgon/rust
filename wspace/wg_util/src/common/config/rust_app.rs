@@ -1,12 +1,13 @@
-use log::{debug, LevelFilter};
+use log::debug;
 
 use crate::common;
 use crate::common::config::app_config::{AppConfig, ConfigInit};
 use crate::common::config::clap::AppConfigCLAP;
+use crate::common::config::log::LogDefaults;
 use crate::Result;
 
-pub fn init(default_level: LevelFilter, use_clap: bool) -> Result<()> {
-    common::log::init(default_level)?;
+pub fn init(log_defaults: LogDefaults, use_clap: bool) -> Result<()> {
+    common::config::log::init(log_defaults)?;
 
     let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
 

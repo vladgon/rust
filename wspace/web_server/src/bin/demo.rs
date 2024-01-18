@@ -1,11 +1,30 @@
 use std::sync::Arc;
 use std::sync::atomic::AtomicI16;
 use std::sync::atomic::Ordering::Relaxed;
+use std::thread::spawn;
 use std::time::Duration;
 
+use ctor::ctor;
 use futures::{FutureExt, StreamExt, TryStreamExt};
 use rand::random;
 use tokio::task::JoinError;
+
+use wg_util::common::config::log::{Level, LogDefaults};
+use wg_util::common::config::log::LogImplType::Tracing;
+use wg_util::common::config::rust_app;
+
+#[ctor]
+fn init() {
+    spawn(|| {
+        _ = rust_app::init(LogDefaults {
+            log_type: Tracing,
+            default_level: Level::default(),
+        },
+                           false);
+    })
+        .join()
+        .expect("Failed to init the app");
+}
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {

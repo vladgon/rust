@@ -2,32 +2,37 @@ extern crate web_server;
 
 use std::env;
 use std::sync::{Arc, Mutex};
+use std::thread::spawn;
 
 use ctor::ctor;
 use futures::{StreamExt, TryStreamExt};
 use log::{debug, info};
+use tokio::task::JoinError;
 use tracing::instrument;
 
+use wg_util::common::config::log::{Level, LogDefaults};
+use wg_util::common::config::log::LogImplType::Tracing;
+use wg_util::common::config::rust_app;
 use wg_util::Result;
 
 #[ctor]
-fn init_tracing() {
-    tracing_subscriber::fmt()
-        .with_target(true)
-        .with_file(false)
-        .with_timer(tracing_subscriber::fmt::time::time())
-        .with_line_number(true)
-        .with_thread_ids(true)
-        .with_level(true)
-        .with_max_level(tracing::Level::INFO)
-        .init();
-    // wg_util::common::config::rust_app::init(Debug, false);
+fn init() {
+    spawn(|| {
+        _ = rust_app::init(LogDefaults {
+            log_type: Tracing,
+            default_level: Level::default(),
+        },
+                           false);
+    })
+        .join()
+        .expect("Failed to init the app");
 }
 
 #[instrument(err)]
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 #[instrument(level = "debug")]
 async fn main() -> Result<()> {
+    // init();
     info!("Starting main");
     info!("Log env '{}'", env::var("RUST_LOG").unwrap_or("INFO".into()));
     info!("Res {:?}", demo_task().await);
@@ -50,7 +55,7 @@ fn main_man() -> Result<()> {
 #[instrument]
 async fn demo_task() -> Result<Vec<i32>> {
     let hello = Arc::new(Mutex::new(String::from("Hello")));
-    let res = futures::stream::iter(0..10)
+    futures::stream::iter(0..10)
         .map(move |i| {
             let hello = hello.clone();
             tokio::task::spawn(async move {
@@ -59,9 +64,8 @@ async fn demo_task() -> Result<Vec<i32>> {
         })
         .buffered(12)
         .try_collect()
-        // .map_err(JoinError::into)
-        .await;
-    res.map_err(|e| e.into())
+        .await
+        .map_err(JoinError::into)
 }
 
 
