@@ -3,6 +3,8 @@ use std::env;
 use anyhow::bail;
 use log::LevelFilter::{Debug, Error, Info, Trace};
 
+use crate::ResultExt;
+
 pub const RUST_LOG: &str = "RUST_LOG";
 
 mod tracing;
@@ -41,7 +43,7 @@ fn get_log_level(default_level: Level) -> crate::Result<Level> {
     match env::var(RUST_LOG) {
         Ok(env_level) => env_level.try_into(),
         Err(_) => Ok(default_level),
-    }.map_err(anyhow::Error::into)
+    }.into_std_error()
 }
 
 impl TryFrom<String> for Level {

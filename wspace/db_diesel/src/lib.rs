@@ -2,9 +2,8 @@
 extern crate diesel;
 
 use diesel::prelude::*;
-use diesel::result::Error;
 
-use wg_util::Result;
+use wg_util::{Result, ResultExt};
 
 use self::models::{NewPost, Post};
 
@@ -28,5 +27,5 @@ pub fn create_post(conn: &mut MysqlConnection, title: &str, body: &str) -> Resul
 
         posts.order(id.desc()).first(conn)
     })
-        .map_err(Error::into)
+        .into_std_error()
 }

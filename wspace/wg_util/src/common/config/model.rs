@@ -20,4 +20,5 @@ pub struct DB {
 pub struct Kafka {
     pub broker: String,
     pub topic: String,
+    pub pollSleep: u64,
 }

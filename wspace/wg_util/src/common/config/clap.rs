@@ -2,6 +2,8 @@ use std::path::Path;
 
 use clap::Parser;
 
+use crate::common::io::cargo_home;
+
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -28,13 +30,10 @@ impl AppConfigCLAP {
     }
 
     fn derive_path() -> String {
-        let path1 = Path::new("wg_sample_app/resources/app_config.yaml");
-        let path2 = Path::new("..").join(path1);
-        if path1.exists() {
-            path1.to_str().unwrap().to_string()
-        } else  {
-            path2.to_str().unwrap().to_string()
-        }
+        let cargo_home = cargo_home().unwrap();
+        let config_path = Path::new("wg_sample_app/resources/app_config.yaml");
+        let path = Path::new(cargo_home.as_str()).join(config_path);
+        path.to_str().unwrap().to_string()
     }
 }
 

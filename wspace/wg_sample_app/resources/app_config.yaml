@@ -6,3 +6,4 @@ db:
 kafka:
   broker: localhost:29092
   topic: rust
+  pollSleep: 1000

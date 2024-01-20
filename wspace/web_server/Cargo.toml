@@ -5,12 +5,12 @@ authors = ["vladgon <valdgon@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-tokio = { version = "^1", features = ["rt-multi-thread", "macros", "time"] }
-futures = "0.3"
-tracing = "0.1"
-tracing-subscriber = "0.3"
-tracing-futures = "0.2"
-rand = "0.8"
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
+futures = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-futures = { workspace = true }
+rand = { workspace = true }
 wg_util = { workspace = true }
-ctor = "0.2.6"
-log = { workspace = true, features = [] }
+ctor = { workspace = true }
+log = { workspace = true }

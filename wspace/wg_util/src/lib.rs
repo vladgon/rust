@@ -1,22 +1,12 @@
-use std::error::Error;
-
 pub mod common;
 
-pub type Result<T> = std::result::Result<T, Box<dyn Error>>;
-// pub type Result<T> = std::result::Result<T, Error>;
+pub type StdErrorBox = Box<dyn std::error::Error>;
+pub type Result<T> = std::result::Result<T, StdErrorBox>;
 
-// #[derive(Error, Debug)]
-// enum MyError {
-//     // #[error("Set Logger Error")]
-//     // setloggere(SetLoggerError),
-//
-//     #[error(transparent)]
-//     SetLoggerError(#[from]  SetLoggerError),
-//     // #[error(transparent)]
-//     // AnyHowError(#[from]  anyhow::Error),
-//     // #[error(transparent)]
-//     // SerdeDesStdError(#[from]  Box<dyn StdError>),
-//     // #[error(transparent)]
-//     // IOError(#[from]  std::io::Error),
-//     //
-// }
+pub trait ResultExt<T> {
+    fn into_std_error(self) -> Result<T>;
+}
+
+impl<T, E: Into<StdErrorBox>> ResultExt<T> for std::result::Result<T, E> {
+    fn into_std_error(self) -> Result<T> { self.map_err(|e| e.into()) }
+}
