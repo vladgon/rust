@@ -15,7 +15,7 @@ fn main() -> wg_util::Result<()> {
 
     let mut producer = wg_kafka::producer(&[settings.kafka.broker.clone()])?;
     let topic = settings.kafka.topic.as_str();
-    (1..100)
+    (0..1_000)
         .try_for_each(|_| {
             let data = serde_json::to_string(&model::SampleData {
                 name: "Hello".to_string(),

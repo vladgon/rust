@@ -19,7 +19,7 @@ pub fn producer(brokers: &[String]) -> Result<Producer> {
 }
 
 pub fn consumer(group: String, topic: String, brokers: &[String]) -> Result<Consumer> {
-    debug!("Creating Producer {:?}", brokers);
+    debug!("Creating Consumer {:?}", brokers);
     Consumer::from_hosts(brokers.into())
         .with_topic(topic)
         .with_group(group)

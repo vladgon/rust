@@ -1,5 +1,7 @@
 extern crate wg_kafka;
 
+use std::sync::Arc;
+use std::sync::atomic::{AtomicI16, Ordering};
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -23,10 +25,10 @@ fn main() -> Result<()> {
 }
 
 fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<()> {
-    let mut con = consumer(group, topic, brokers)?;
-
+    let mut consumer = consumer(group, topic, brokers)?;
+    let counter = Arc::new(AtomicI16::new(0));
     loop {
-        let mss = con.poll()?;
+        let mss = consumer.poll()?;
         if mss.is_empty() {
             debug!("No messages available, sleeping ...");
             sleep(Duration::from_millis(app_config::settings()?.kafka.pollSleep));
@@ -35,9 +37,12 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
 
         _ = mss.iter()
             .map(|ms| {
+                use rayon::prelude::*;
                 ms.messages()
-                    .iter()
-                    .for_each(|mes| debug!("{}:{}@{}: {:?}",
+                    // .par_iter()
+                    .par_iter()
+                    .for_each_with(counter.clone(), |i, mes| debug!("{}:  {}:{}@{}: {:?}",
+                        counter.fetch_add(1, Ordering::Relaxed),
                         ms.topic(),
                         ms.partition(),
                         mes.offset,
@@ -45,7 +50,7 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
                 ));
                 ms
             })
-            .try_for_each(|ms: MessageSet| con.consume_messageset(ms));
-        con.commit_consumed()?
+            .try_for_each(|ms: MessageSet| consumer.consume_messageset(ms));
+        consumer.commit_consumed()?
     }
 }
