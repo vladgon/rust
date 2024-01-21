@@ -2,7 +2,7 @@ use std::path::Path;
 
 use clap::Parser;
 
-use crate::common::io::cargo_home;
+use crate::common::io::cargo_work_space_home;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -30,7 +30,7 @@ impl AppConfigCLAP {
     }
 
     fn derive_path() -> String {
-        let cargo_home = cargo_home().unwrap();
+        let cargo_home = cargo_work_space_home().unwrap();
         let config_path = Path::new("wg_sample_app/resources/app_config.yaml");
         let path = Path::new(cargo_home.as_str()).join(config_path);
         path.to_str().unwrap().to_string()
