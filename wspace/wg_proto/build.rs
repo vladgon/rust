@@ -65,7 +65,7 @@ fn wkt(config: &mut Config) -> wg_util::Result<&mut Config> {
                             .collect::<Vec<String>>()
                             .as_ref(),
                         &[format!("{}/", PROTO_PACKAGE)])?;
-    wg_util::info_build!("Generating WKT descriptor_file:  {:?}",descriptor_file);
+    info_build!("Generating WKT descriptor_file:  {:?}",descriptor_file);
 
 
     let descriptor_bytes = std::fs::read(descriptor_file)?;
