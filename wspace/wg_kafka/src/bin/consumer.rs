@@ -39,9 +39,8 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
             .map(|ms| {
                 use rayon::prelude::*;
                 ms.messages()
-                    // .par_iter()
                     .par_iter()
-                    .for_each_with(counter.clone(), |i, mes| debug!("{}:  {}:{}@{}: {:?}",
+                    .for_each(|mes| debug!("{}:  {}:{}@{}: {:?}",
                         counter.fetch_add(1, Ordering::Relaxed),
                         ms.topic(),
                         ms.partition(),

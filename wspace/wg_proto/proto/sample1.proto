@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package wg.proto.model;
+
+message Foo1 {
+  string name = 1;
+  PhoneType1 types = 2;
+}
+enum PhoneType1 {
+  MOBILE1 = 0;
+  HOME1 = 1;
+  WORK1 = 2;
+}

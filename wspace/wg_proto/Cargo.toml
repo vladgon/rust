@@ -1,0 +1,23 @@
+[package]
+name = "wg_proto"
+version = "0.1.0"
+authors = ["vladgon <valdgon@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+wg_util = { workspace = true }
+log = { workspace = true }
+prost = "0.12"
+prost-types = "0.12"
+prost-reflect = "0.12"
+const-str="0.5.6"
+
+prost-helper = "0.8"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+once_cell = { version = "1.19.0", features = [] }
+
+[build-dependencies]
+prost-build = "0.12.3"
+prost-serde = "0.1"

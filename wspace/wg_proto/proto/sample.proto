@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package wg.proto.model;
+
+// A snazzy new shirt!
+message Shirt {
+  enum Size {
+    SMALL = 0;
+    MEDIUM = 1;
+    LARGE = 2;
+  }
+
+  optional string color = 1 [json_name = "color_custom"];
+  Size size = 2;
+}
