@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package wg.proto.model;
+package proto.model;
 
-message Foo1 {
+message Foo {
   string name = 1;
-  PhoneType1 types = 2;
+  PhoneType types = 2;
+  optional string color = 3 [json_name = "color_custom"];
 }
-enum PhoneType1 {
+enum PhoneType {
   MOBILE1 = 0;
   HOME1 = 1;
   WORK1 = 2;

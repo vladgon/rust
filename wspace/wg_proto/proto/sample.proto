@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-package wg.proto.model;
+package proto.model;
 
+import "google/protobuf/timestamp.proto";
 // A snazzy new shirt!
 message Shirt {
   enum Size {
@@ -12,4 +13,5 @@ message Shirt {
 
   optional string color = 1 [json_name = "color_custom"];
   Size size = 2;
+  google.protobuf.Timestamp createdOn = 3;
 }
