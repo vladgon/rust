@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package proto.model;
+
+message Foo {
+  string name = 1;
+  PhoneType types = 2;
+  optional string color = 3 [json_name = "color_custom1"];
+}
+enum PhoneType {
+  MOBILE1 = 0;
+  HOME1 = 1;
+  WORK1 = 2;
+}
