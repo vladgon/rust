@@ -10,8 +10,16 @@ message Shirt {
     MEDIUM = 1;
     LARGE = 2;
   }
-
   optional string color = 1 [json_name = "color_custom_vlad"];
   Size size = 2;
   google.protobuf.Timestamp createdOn = 3;
+}
+
+message Order {
+  int32 count = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+service Greeter {
+  rpc SayHello (Shirt) returns (Order) {}
 }

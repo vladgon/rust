@@ -10,7 +10,8 @@ fn main() -> Result<()> {
     println!("cargo:rerun-if-changed={}", PROTO_ROOT);
 
     let code_gen = &mut protobuf_codegen::Codegen::new();
-    files(PROTO_ROOT)?
+    let files = files(PROTO_ROOT)?;
+    files
         .iter()
         .fold(code_gen,
               |codegen, file| codegen.input(file))
@@ -23,6 +24,14 @@ fn main() -> Result<()> {
         .cargo_out_dir(GENERATED_OUT_DIR)
         .run()
         .into_std_error()
+
+    // let out = PathBuf::from(env::var("OUT_DIR")?);
+    // _ = protoc_rust_grpc::Codegen::new()
+    //     .out_dir(Path::new(&out).join(GENERATED_OUT_DIR))
+    //     .includes([PROTO_ROOT])
+    //     .inputs(files)
+    //     .run();
+    // Ok(())
 }
 
 fn files<T: AsRef<Path>>(path: T) -> Result<Vec<PathBuf>> {
