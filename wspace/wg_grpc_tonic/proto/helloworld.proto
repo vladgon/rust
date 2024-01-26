@@ -13,6 +13,6 @@ message HelloRequest {
 
 message HelloReply {
   string message = 1;
-//  google.protobuf.Timestamp createdOn = 2;
+  google.protobuf.Timestamp createdOn = 2;
 }
 

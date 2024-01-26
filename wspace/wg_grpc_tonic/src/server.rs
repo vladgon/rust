@@ -1,3 +1,6 @@
+use std::time::SystemTime;
+
+use prost_wkt_types::Timestamp;
 use tonic::{Request, Response, Status, transport::Server};
 
 use helloworld::{HelloReply, HelloRequest};
@@ -18,7 +21,8 @@ impl Greeter for MyGreeter {
     async fn say_hello(&self, request: Request<HelloRequest>) -> Result<Response<HelloReply>, Status> {
         println!("Got a request: {:?}", request);
         let reply = HelloReply {
-            message: format!("Hello {}!", request.into_inner().name).into(),
+            message: format!("Hello {}!", request.into_inner().name),
+            created_on: Timestamp::from(SystemTime::now()).into(),
         };
 
         Ok(Response::new(reply))
