@@ -7,3 +7,6 @@ kafka:
   broker: localhost:29092
   topic: rust
   pollSleep: 1000
+grpc:
+  host: "[::1]"
+  port: 50051

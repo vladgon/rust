@@ -1,3 +1,4 @@
+use std::fs::metadata;
 use std::path::Path;
 
 use clap::Parser;
@@ -22,17 +23,11 @@ impl AppConfigCLAP {
     pub fn init_clap() -> Self {
         Self::parse()
     }
-    pub fn init_no_clap(config_files: String, env_override: Option<bool>) -> Self {
-        Self {
-            config_files,
-            env_override,
-        }
-    }
-
     fn derive_path() -> String {
         let cargo_home = cargo_work_space_home().unwrap();
         let config_path = Path::new("wg_sample_app/resources/app_config.yaml");
-        let path = Path::new(cargo_home.as_str()).join(config_path);
+        let path = &Path::new(cargo_home.as_str()).join(config_path);
+        assert!(metadata(path).unwrap().is_file(), "File should exists");
         path.to_str().unwrap().to_string()
     }
 }

@@ -6,8 +6,9 @@ members = [
     "web_server",
     "wg_sample_app",
     "wg_kafka",
-    "wg_proto",
+#    "wg_proto",
     "wg_protobuf_goog",
+    "wg_grpc_tonic",
 ]
 
 [workspace.dependencies]

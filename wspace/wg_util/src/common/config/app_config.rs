@@ -84,7 +84,7 @@ pub trait ConfigInit {
         }
         builder
             .build()
-            .map(|setting| setting.try_deserialize::<Model>())?
+            .map(|setting| setting.try_deserialize::<Model>().unwrap_or_else(|e| panic!("{}", e)))
             .map(|app_config| CONFIG.get_or_init(|| app_config))
             .map(|app_config| {
                 debug!("Processed config {:?}", app_config);
