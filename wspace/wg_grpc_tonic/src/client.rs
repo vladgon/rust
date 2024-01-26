@@ -1,6 +1,5 @@
-use futures::{FutureExt, StreamExt, TryStreamExt};
+use futures::{StreamExt, TryStreamExt};
 use log::info;
-use tonic::codegen::Body;
 use tonic::Response;
 
 use wg_util::common::config::app_config::settings;
@@ -18,14 +17,12 @@ pub mod hello_world {
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> wg_util::Result<()> {
     _ = rust_app::init(LogDefaults { log_type: Tracing, default_level: Info }, false);
 
     let host = settings()?.grpc.host.as_str();
     let port = settings()?.grpc.port.as_str();
-
-
-    let res = futures::stream::iter(0..1_000)
+    let responses = futures::stream::iter(0..50)
         .map(move |_| {
             tokio::spawn(async move {
                 let request = tonic::Request::new(HelloRequest {
@@ -33,14 +30,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 });
                 let client = GreeterClient::connect(format!("http://{host}:{port}")).await;
                 let response = client.unwrap().say_hello(request).await;
-                let response = response.unwrap();
-                info!("Response as Json: {}",  serde_json::to_string(response.get_ref()).unwrap());
-                info!("RESPONSE={:?}", response.get_ref());
+                let response_ref = response.as_ref();
+                info!("Response as Json: {}",  serde_json::to_string(response_ref.unwrap().get_ref()).unwrap());
+                info!("RESPONSE={:?}", response_ref);
                 response
             })
         })
         .buffer_unordered(50)
+        .map(|r| r.map(Result::into_std_error).into_std_error()?)
         .try_collect::<Vec<Response<HelloReply>>>()
-        .await;
+        .await?;
+    info!("Responses count {}", responses.len());
     Ok(())
 }
