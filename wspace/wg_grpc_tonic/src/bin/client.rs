@@ -3,8 +3,8 @@ use log::info;
 use tonic::Response;
 
 use wg_util::common::config::app_config::settings;
-use wg_util::common::config::log::Level::Info;
-use wg_util::common::config::log::LogDefaults;
+use wg_util::common::config::log::{LogDefaults, LogEntry};
+use wg_util::common::config::log::Level::{Debug, Info};
 use wg_util::common::config::log::LogImplType::Tracing;
 use wg_util::common::config::rust_app;
 use wg_util::ResultExt;
@@ -18,11 +18,15 @@ pub mod hello_world {
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
-    _ = rust_app::init(LogDefaults { log_type: Tracing, default_level: Info }, false);
+    rust_app::init(LogDefaults::new(Tracing,
+                                    &[
+                                        LogEntry::all_modules(Info),
+                                        LogEntry::new("client", Debug)]),
+                   false)?;
 
     let host = settings()?.grpc.host.as_str();
     let port = settings()?.grpc.port.as_str();
-    let responses = futures::stream::iter(0..50)
+    let responses = futures::stream::iter(0..1_000)
         .map(move |_| {
             tokio::spawn(async move {
                 let request = tonic::Request::new(HelloRequest {

@@ -7,7 +7,9 @@ use helloworld::{HelloReply, HelloRequest};
 use helloworld::greeter_server::Greeter;
 use helloworld::greeter_server::GreeterServer;
 use wg_util::common::config::app_config::settings;
-use wg_util::common::config::log::LogDefaults;
+use wg_util::common::config::log::{LogDefaults, LogEntry};
+use wg_util::common::config::log::Level::Debug;
+use wg_util::common::config::log::LogImplType::Tracing;
 use wg_util::common::config::rust_app;
 use wg_util::ResultExt;
 
@@ -29,9 +31,10 @@ impl Greeter for MyGreeter {
     }
 }
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
-    _ = rust_app::init(LogDefaults::default(), false);
+    rust_app::init(LogDefaults::new(Tracing,
+                                    &[LogEntry::new("server", Debug)]), false)?;
     let host = settings()?.grpc.host.as_str();
     let port = settings()?.grpc.port.as_str();
     let addr = format!("{host}:{port}").parse()?;

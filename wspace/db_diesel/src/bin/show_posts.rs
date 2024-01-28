@@ -1,5 +1,4 @@
-extern crate db_diesel;
-extern crate wg_util;
+// extern crate db_diesel;
 
 use diesel::prelude::*;
 use log::debug;

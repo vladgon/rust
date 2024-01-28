@@ -1,7 +1,8 @@
 use std::env;
+use std::fmt::{Display, Formatter};
 
 use anyhow::bail;
-use log::LevelFilter::{Debug, Error, Info, Trace};
+use log::LevelFilter;
 
 use crate::ResultExt;
 
@@ -10,10 +11,41 @@ pub const RUST_LOG: &str = "RUST_LOG";
 mod tracing;
 mod env_log;
 
-#[derive(Default)]
-pub struct LogDefaults {
-    pub log_type: LogImplType,
-    pub default_level: Level,
+
+pub struct LogEntry<'a> {
+    module: Option<&'a str>,
+    level: Level,
+}
+
+impl<'a> LogEntry<'a> {
+    pub fn new(module: &'a str, level: Level) -> Self {
+        Self { module: Some(module), level }
+    }
+    pub fn all_modules(level: Level) -> Self {
+        Self { module: None, level }
+    }
+}
+
+pub struct LogDefaults<'a> {
+    log_type: LogImplType,
+    default_level: &'a [LogEntry<'a>],
+
+}
+
+
+impl<'a> LogDefaults<'a> {
+    pub fn new(log_type: LogImplType, default_level: &'a [LogEntry]) -> Self {
+        LogDefaults { log_type, default_level }
+    }
+}
+
+impl Default for LogDefaults<'_> {
+    fn default() -> Self {
+        LogDefaults {
+            log_type: LogImplType::EnvLog,
+            default_level: &[LogEntry { module: None, level: Level::Debug }],
+        }
+    }
 }
 
 #[derive(Default)]
@@ -23,13 +55,14 @@ pub enum LogImplType {
     Tracing,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub enum Level {
     Info,
     #[default]
     Debug,
     Error,
     Trace,
+    Off,
 }
 
 pub fn init(log_defaults: LogDefaults) -> crate::Result<()> {
@@ -41,32 +74,46 @@ pub fn init(log_defaults: LogDefaults) -> crate::Result<()> {
 
 fn get_log_level(default_level: Level) -> crate::Result<Level> {
     match env::var(RUST_LOG) {
-        Ok(env_level) => env_level.try_into(),
+        Ok(env_level) => env_level.as_str().try_into(),
         Err(_) => Ok(default_level),
     }.into_std_error()
 }
 
-impl TryFrom<String> for Level {
+impl TryFrom<&str> for Level {
     type Error = anyhow::Error;
 
-    fn try_from(value: String) -> Result<Self, <Level as TryFrom<String>>::Error> {
+    fn try_from(value: &str) -> Result<Self, <Level as TryFrom<&str>>::Error> {
         match value.to_lowercase().as_str() {
             "info" => Ok(Level::Info),
             "debug" => Ok(Level::Debug),
             "error" => Ok(Level::Error),
             "trace" => Ok(Level::Trace),
+            "off" => Ok(Level::Off),
             _ => bail!("Unsupported log level: {value}")
         }
     }
 }
 
-impl From<Level> for ::log::LevelFilter {
+impl Display for Level {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Level::Info => write!(f, "info"),
+            Level::Debug => write!(f, "debug"),
+            Level::Error => write!(f, "error"),
+            Level::Trace => write!(f, "trace"),
+            Level::Off => write!(f, "off"),
+        }
+    }
+}
+
+impl From<Level> for LevelFilter {
     fn from(value: Level) -> Self {
         match value {
-            Level::Info => Info,
-            Level::Debug => Debug,
-            Level::Error => Error,
-            Level::Trace => Trace,
+            Level::Info => LevelFilter::Info,
+            Level::Debug => LevelFilter::Debug,
+            Level::Error => LevelFilter::Error,
+            Level::Trace => LevelFilter::Trace,
+            Level::Off => LevelFilter::Off,
         }
     }
 }
@@ -78,6 +125,7 @@ impl From<Level> for tracing_subscriber::filter::LevelFilter {
             Level::Debug => tracing_subscriber::filter::LevelFilter::DEBUG,
             Level::Error => tracing_subscriber::filter::LevelFilter::ERROR,
             Level::Trace => tracing_subscriber::filter::LevelFilter::TRACE,
+            Level::Off => tracing_subscriber::filter::LevelFilter::OFF,
         }
     }
 }

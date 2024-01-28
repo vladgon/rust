@@ -9,10 +9,7 @@ use crate::Result;
 pub fn init(log_defaults: LogDefaults, use_clap: bool) -> Result<()> {
     common::config::log::init(log_defaults)?;
 
-    let args = if use_clap { AppConfigCLAP::init_clap() } else {
-        AppConfigCLAP::default()
-    };
-
+    let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
     let files: Vec<&str> = args.config_files.as_str()
         .split(',')
         .collect();
