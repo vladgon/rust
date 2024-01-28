@@ -48,17 +48,13 @@ impl Default for LogDefaults<'_> {
     }
 }
 
-#[derive(Default)]
 pub enum LogImplType {
-    #[default]
     EnvLog,
     Tracing,
 }
 
-#[derive(Default, Clone, Copy)]
 pub enum Level {
     Info,
-    #[default]
     Debug,
     Error,
     Trace,
@@ -72,23 +68,24 @@ pub fn init(log_defaults: LogDefaults) -> crate::Result<()> {
     }
 }
 
-fn get_log_level(default_level: Level) -> crate::Result<Level> {
+fn get_log_level(default_level: &Level) -> crate::Result<&Level> {
     match env::var(RUST_LOG) {
         Ok(env_level) => env_level.as_str().try_into(),
         Err(_) => Ok(default_level),
-    }.into_std_error()
+    }
+        .into_std_error()
 }
 
-impl TryFrom<&str> for Level {
+impl TryFrom<&str> for &Level {
     type Error = anyhow::Error;
 
-    fn try_from(value: &str) -> Result<Self, <Level as TryFrom<&str>>::Error> {
+    fn try_from(value: &str) -> Result<Self, <&Level as TryFrom<&str>>::Error> {
         match value.to_lowercase().as_str() {
-            "info" => Ok(Level::Info),
-            "debug" => Ok(Level::Debug),
-            "error" => Ok(Level::Error),
-            "trace" => Ok(Level::Trace),
-            "off" => Ok(Level::Off),
+            "info" => Ok(&Level::Info),
+            "debug" => Ok(&Level::Debug),
+            "error" => Ok(&Level::Error),
+            "trace" => Ok(&Level::Trace),
+            "off" => Ok(&Level::Off),
             _ => bail!("Unsupported log level: {value}")
         }
     }
@@ -106,8 +103,8 @@ impl Display for Level {
     }
 }
 
-impl From<Level> for LevelFilter {
-    fn from(value: Level) -> Self {
+impl From<&Level> for LevelFilter {
+    fn from(value: &Level) -> Self {
         match value {
             Level::Info => LevelFilter::Info,
             Level::Debug => LevelFilter::Debug,
@@ -118,8 +115,8 @@ impl From<Level> for LevelFilter {
     }
 }
 
-impl From<Level> for tracing_subscriber::filter::LevelFilter {
-    fn from(value: Level) -> Self {
+impl From<&Level> for tracing_subscriber::filter::LevelFilter {
+    fn from(value: &Level) -> Self {
         match value {
             Level::Info => tracing_subscriber::filter::LevelFilter::INFO,
             Level::Debug => tracing_subscriber::filter::LevelFilter::DEBUG,
