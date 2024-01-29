@@ -24,7 +24,7 @@ pub fn settings<'a>() -> Result<&'a Model> {
 
 static CONFIG: OnceLock<Model> = OnceLock::new();
 
-fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
+fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
     let res = path.as_ref().extension()
         .and_then(OsStr::to_str)
         .map(str::to_lowercase)
@@ -34,7 +34,7 @@ fn get_type<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
         })
         .with_context(|| format!(" path {:?}: {}",
                                  path.as_ref(),
-                                 "No extension, cannot derive the wg_sample_app format "))?;
+                                 "No extension, cannot derive the wg_sample_app format"))?;
     res.into_std_error()
 }
 
@@ -50,12 +50,13 @@ pub trait ConfigInit {
         let sources = sources.iter()
             .try_fold(&mut Vec::new(),
                       |res, (path, required)| {
-                          let path_as_string = path.as_ref().to_str().with_context(|| "Cannot convert path to String")?;
-                          get_type(path)
-                              .map(|format| res.push(File::new(path_as_string, format).required(*required)))
+                          let path_as_str = path.as_ref().to_str().with_context(|| "Cannot convert path to String")?;
+                          get_format(path)
+                              .map(|format| res.push(File::new(path_as_str, format).required(*required)))
                               .and(Ok(res))
                       },
-            )?.to_owned();
+            )?
+            .to_owned();
         self.init_with_sources(sources, env_override)
     }
 
