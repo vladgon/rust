@@ -1,7 +1,7 @@
 use log::debug;
 
 use crate::common;
-use crate::common::config::app_config::{AppConfig, ConfigInit};
+use crate::common::config::app_config::{AppConfig, Init};
 use crate::common::config::clap::AppConfigCLAP;
 use crate::common::config::log::LogConfig;
 use crate::Result;

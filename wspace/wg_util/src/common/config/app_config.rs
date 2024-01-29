@@ -14,7 +14,7 @@ use crate::common::config::model::Model;
 #[derive(Default)]
 pub struct AppConfig {}
 
-impl ConfigInit for AppConfig {}
+impl Init for AppConfig {}
 
 pub fn settings<'a>() -> Result<&'a Model> {
     CONFIG.get()
@@ -38,7 +38,7 @@ fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
     res.into_std_error()
 }
 
-pub trait ConfigInit {
+pub trait Init {
     fn init_with_files<T: AsRef<Path>>(&self, sources: &[T], env_override: bool) -> Result<&Model> {
         let t2: Vec<(&T, bool)> = sources.iter()
             .map(|t| (t, true))
