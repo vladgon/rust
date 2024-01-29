@@ -10,7 +10,7 @@ use log::{debug, info};
 use tracing::instrument;
 
 use wg_util::{Result, ResultExt};
-use wg_util::common::config::log::{LogDefaults, LogEntry};
+use wg_util::common::config::log::{LogDefaults, LogLevelEntry};
 use wg_util::common::config::log::Level::Debug;
 use wg_util::common::config::log::LogImplType::Tracing;
 use wg_util::common::config::rust_app;
@@ -18,7 +18,7 @@ use wg_util::common::config::rust_app;
 #[ctor]
 fn init() {
     spawn(|| {
-        _ = rust_app::init(LogDefaults::new(Tracing, &[LogEntry::all_modules(Debug)]), false);
+        _ = rust_app::init(LogDefaults::new(Tracing, &[LogLevelEntry::Level(Debug)]), false);
     })
         .join()
         .expect("Failed to init the app");

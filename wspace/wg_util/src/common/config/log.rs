@@ -2,7 +2,6 @@ use std::env;
 use std::fmt::{Display, Formatter};
 
 use anyhow::bail;
-use log::LevelFilter;
 
 use crate::ResultExt;
 
@@ -11,30 +10,20 @@ pub const RUST_LOG: &str = "RUST_LOG";
 mod tracing;
 mod env_log;
 
-
-pub struct LogEntry<'a> {
-    module: Option<&'a str>,
-    level: Level,
-}
-
-impl<'a> LogEntry<'a> {
-    pub fn new(module: &'a str, level: Level) -> Self {
-        Self { module: Some(module), level }
-    }
-    pub fn all_modules(level: Level) -> Self {
-        Self { module: None, level }
-    }
+pub enum LogLevelEntry<'a> {
+    ///[&str] log module name, [Level]
+    ModuleLevel(&'a str, Level),
+    Level(Level),
 }
 
 pub struct LogDefaults<'a> {
     log_type: LogImplType,
-    default_level: &'a [LogEntry<'a>],
-
+    default_level: &'a [LogLevelEntry<'a>],
 }
 
 
 impl<'a> LogDefaults<'a> {
-    pub fn new(log_type: LogImplType, default_level: &'a [LogEntry]) -> Self {
+    pub fn new(log_type: LogImplType, default_level: &'a [LogLevelEntry]) -> Self {
         LogDefaults { log_type, default_level }
     }
 }
@@ -43,7 +32,7 @@ impl Default for LogDefaults<'_> {
     fn default() -> Self {
         LogDefaults {
             log_type: LogImplType::EnvLog,
-            default_level: &[LogEntry { module: None, level: Level::Debug }],
+            default_level: &[LogLevelEntry::Level(Level::Debug)],
         }
     }
 }
@@ -103,14 +92,14 @@ impl Display for Level {
     }
 }
 
-impl From<&Level> for LevelFilter {
+impl From<&Level> for log::LevelFilter {
     fn from(value: &Level) -> Self {
         match value {
-            Level::Info => LevelFilter::Info,
-            Level::Debug => LevelFilter::Debug,
-            Level::Error => LevelFilter::Error,
-            Level::Trace => LevelFilter::Trace,
-            Level::Off => LevelFilter::Off,
+            Level::Info => log::LevelFilter::Info,
+            Level::Debug => log::LevelFilter::Debug,
+            Level::Error => log::LevelFilter::Error,
+            Level::Trace => log::LevelFilter::Trace,
+            Level::Off => log::LevelFilter::Off,
         }
     }
 }

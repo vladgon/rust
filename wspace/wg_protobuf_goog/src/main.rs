@@ -19,10 +19,12 @@ mod proto_generated {
 fn main() -> wg_util::Result<()> {
     rust_app::init(LogDefaults::default(), false)?;
 
-    let mut shirt = Shirt::default();
-    shirt.color = Some("Green".to_string());
-    shirt.size = Size::LARGE.into();
-    shirt.createdOn = MessageField::some(Timestamp::from(SystemTime::now() - chrono::Duration::days(1).to_std()?));
+    let shirt = Shirt {
+        color: Some("Green".to_string()),
+        size: Size::LARGE.into(),
+        createdOn: MessageField::some(Timestamp::from(SystemTime::now() - chrono::Duration::days(1).to_std()?)),
+        ..Default::default()
+    };
     let bytes = shirt.write_to_bytes()?;
     debug!("To Bytes Shirt: {:?}", bytes);
     let from_bytes = Shirt::parse_from_bytes(bytes.as_slice())?;

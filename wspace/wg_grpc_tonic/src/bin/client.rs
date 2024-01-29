@@ -3,7 +3,7 @@ use log::info;
 use tonic::Response;
 
 use wg_util::common::config::app_config::settings;
-use wg_util::common::config::log::{LogDefaults, LogEntry};
+use wg_util::common::config::log::{LogDefaults, LogLevelEntry};
 use wg_util::common::config::log::Level::{Debug, Info};
 use wg_util::common::config::log::LogImplType::Tracing;
 use wg_util::common::config::rust_app;
@@ -20,8 +20,8 @@ pub mod hello_world {
 async fn main() -> wg_util::Result<()> {
     rust_app::init(LogDefaults::new(Tracing,
                                     &[
-                                        LogEntry::all_modules(Info),
-                                        LogEntry::new("client", Debug)]),
+                                        LogLevelEntry::Level(Info),
+                                        LogLevelEntry::ModuleLevel("client", Debug)]),
                    false)?;
 
     let host = settings()?.grpc.host.as_str();

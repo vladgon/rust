@@ -1,13 +1,17 @@
 use log::debug;
 
 use crate::{Result, ResultExt};
-use crate::common::config::log::{get_log_level, LogEntry};
+use crate::common::config::log::{get_log_level, LogLevelEntry};
 
-pub fn init(levels: &[LogEntry]) -> Result<()> {
-    let builder = &mut env_logger::builder();
-    levels.iter().fold(builder, |b, l| {
-        b.filter(l.module, get_log_level(&l.level).unwrap().into())
-    })
+pub fn init(log_level_entries: &[LogLevelEntry]) -> Result<()> {
+    log_level_entries.iter()
+        .fold(&mut env_logger::builder(),
+              |b, l| {
+                  match l {
+                      LogLevelEntry::ModuleLevel(module, level) => b.filter_module(module, get_log_level(level).unwrap().into()),
+                      LogLevelEntry::Level(level) => b.filter(None, get_log_level(level).unwrap().into())
+                  }
+              })
         .try_init()
         .map(|_| debug!("Log initialized"))
         .into_std_error()

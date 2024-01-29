@@ -1,7 +1,7 @@
-use crate::common::config::log::LogEntry;
+use crate::common::config::log::LogLevelEntry;
 
-pub fn init(levels: &[LogEntry]) -> crate::Result<()> {
-    Ok(tracing_subscriber::fmt()
+pub fn init(levels: &[LogLevelEntry]) -> crate::Result<()> {
+    tracing_subscriber::fmt()
         .with_target(true)
         .with_file(false)
         .with_timer(tracing_subscriber::fmt::time::time())
@@ -11,7 +11,12 @@ pub fn init(levels: &[LogEntry]) -> crate::Result<()> {
         .with_env_filter(
             {
                 let res = levels.iter()
-                    .map(|log_entry| format!("{}{}", log_entry.module.as_ref().map(|v| format!("{v}=")).unwrap_or("".into()), log_entry.level.to_string()))
+                    .map(|log_entry| {
+                        match log_entry {
+                            LogLevelEntry::ModuleLevel(module, level) => format!("{module}={}", level.to_string()),
+                            LogLevelEntry::Level(level) => format!("{}", level.to_string()),
+                        }
+                    })
                     // .map(|log_entry: LogEntry| format!("{}{}", _0.as_ref().map(|v| format!("{v}=")).unwrap_or("".into()), _1.to_string()))
                     .collect::<Vec<String>>()
                     .join(",");
@@ -19,5 +24,6 @@ pub fn init(levels: &[LogEntry]) -> crate::Result<()> {
                 res
             }
         )
-        .init())
+        .init();
+    Ok(())
 }

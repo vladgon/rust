@@ -29,12 +29,11 @@ pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
 }
 
 pub fn db_url() -> ConnectionResult<String> {
-    let res = settings().map(|s|
+    settings().map(|s|
         s.db.url
             .replace("${user}", s.db.user.as_str())
             .replace("${password}", s.db.password.as_ref()
-                .unwrap_or(&String::from(String::new())).as_str()));
-    res
+                .unwrap_or(&String::new())))
 }
 
 fn settings<'a>() -> Result<&'a Model, ConnectionError> {
