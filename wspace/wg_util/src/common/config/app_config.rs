@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 
 use anyhow::{bail, Context};
 use config::{Config, Environment, File, FileFormat, Map, Source};
-use config::FileFormat::Yaml;
+use config::FileFormat::{Json, Json5, Yaml};
 use log::debug;
 
 use crate::{Result, ResultExt};
@@ -25,17 +25,17 @@ pub fn settings<'a>() -> Result<&'a Model> {
 static CONFIG: OnceLock<Model> = OnceLock::new();
 
 fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
-    let res = path.as_ref().extension()
+    path.as_ref().extension()
         .and_then(OsStr::to_str)
-        .map(str::to_lowercase)
-        .map(|ext| match ext.as_str() {
+        .with_context(|| format!("Path {:?}: No extension, cannot derive the wg_sample_app format",
+                                 path.as_ref()))
+        .map(|ext| match ext.to_lowercase().as_str() {
             "yaml" => Ok(Yaml),
+            "json" => Ok(Json),
+            "json5" => Ok(Json5),
             _ => bail!("Extension {ext} is not supported, path {}", path.as_ref().to_str().unwrap_or("no extension"))
-        })
-        .with_context(|| format!(" path {:?}: {}",
-                                 path.as_ref(),
-                                 "No extension, cannot derive the wg_sample_app format"))?;
-    res.into_std_error()
+        })?
+        .into_std_error()
 }
 
 pub trait Init {
