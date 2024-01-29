@@ -50,8 +50,7 @@ pub trait ConfigInit {
     fn init_with_files_and_required<T: AsRef<Path>>(&self, sources: &[(T, bool)], env_override: bool) -> Result<&Model> {
         let sources = sources.iter()
             .try_fold(Ok(Vec::new()),
-                      |res, t2| {
-                          let (path, required) = t2;
+                      |res, (path, required)| {
                           match get_type(path) {
                               Ok(format) => {
                                   let res = res.map(|mut v| {

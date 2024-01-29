@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run wg_sample_app" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="run --package wg_sample_app --bin wg_sample_app -- -c wg_sample_app/resources/app_config.yaml,wg_sample_app/resources/app_config1.yaml  -e true" />
+    <option name="command" value="run --package wg_sample_app --bin wg_sample_app -- -c wg_sample_app/resources/app_config.yaml,wg_sample_app/resources/app_config2.yaml  -e true" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />
     <option name="emulateTerminal" value="true" />

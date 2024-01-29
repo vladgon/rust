@@ -1,6 +1,6 @@
-use crate::common::config::log::LogLevelEntry;
+use crate::common::config::log::Logger;
 
-pub fn init(levels: &[LogLevelEntry]) -> crate::Result<()> {
+pub fn init(levels: &[Logger]) -> crate::Result<()> {
     tracing_subscriber::fmt()
         .with_target(true)
         .with_file(false)
@@ -13,8 +13,8 @@ pub fn init(levels: &[LogLevelEntry]) -> crate::Result<()> {
                 let res = levels.iter()
                     .map(|log_entry| {
                         match log_entry {
-                            LogLevelEntry::ModuleLevel(module, level) => format!("{module}={}", level.to_string()),
-                            LogLevelEntry::Level(level) => format!("{}", level.to_string()),
+                            Logger::LoggerForModule(module, level) => format!("{module}={}", level.to_string()),
+                            Logger::LoggerRoot(level) => format!("{}", level.to_string()),
                         }
                     })
                     // .map(|log_entry: LogEntry| format!("{}{}", _0.as_ref().map(|v| format!("{v}=")).unwrap_or("".into()), _1.to_string()))
@@ -27,3 +27,4 @@ pub fn init(levels: &[LogLevelEntry]) -> crate::Result<()> {
         .init();
     Ok(())
 }
+

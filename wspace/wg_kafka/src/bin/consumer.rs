@@ -12,11 +12,11 @@ use wg_kafka::consumer;
 use wg_kafka::model::SampleData;
 use wg_util::common::config;
 use wg_util::common::config::app_config;
-use wg_util::common::config::log::LogDefaults;
+use wg_util::common::config::log::LogConfig;
 use wg_util::Result;
 
 fn main() -> Result<()> {
-    config::rust_app::init(LogDefaults::default(), false)?;
+    config::rust_app::init(LogConfig::default(), false)?;
     let settings = app_config::settings()?;
 
     let topic = settings.kafka.topic.to_owned();

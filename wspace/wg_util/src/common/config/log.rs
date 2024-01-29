@@ -10,34 +10,41 @@ pub const RUST_LOG: &str = "RUST_LOG";
 mod tracing;
 mod env_log;
 
-pub enum LogLevelEntry<'a> {
+pub enum Logger<'a> {
+    LoggerRoot(Level),
     ///[&str] log module name, [Level]
-    ModuleLevel(&'a str, Level),
-    Level(Level),
+    LoggerForModule(&'a str, Level),
 }
 
-pub struct LogDefaults<'a> {
-    log_type: LogImplType,
-    default_level: &'a [LogLevelEntry<'a>],
+pub struct LogConfig<'a> {
+    kind: LogProvider,
+    logger: &'a [Logger<'a>],
 }
 
 
-impl<'a> LogDefaults<'a> {
-    pub fn new(log_type: LogImplType, default_level: &'a [LogLevelEntry]) -> Self {
-        LogDefaults { log_type, default_level }
+impl<'a> LogConfig<'a> {
+    pub fn new(log_type: LogProvider, default_level: &'a [Logger]) -> Self {
+        LogConfig { kind: log_type, logger: default_level }
     }
 }
 
-impl Default for LogDefaults<'_> {
+pub fn init(log_defaults: LogConfig) -> crate::Result<()> {
+    match log_defaults.kind {
+        LogProvider::EnvLog => env_log::init(log_defaults.logger),
+        LogProvider::Tracing => tracing::init(log_defaults.logger)
+    }
+}
+
+impl Default for LogConfig<'_> {
     fn default() -> Self {
-        LogDefaults {
-            log_type: LogImplType::EnvLog,
-            default_level: &[LogLevelEntry::Level(Level::Debug)],
+        LogConfig {
+            kind: LogProvider::EnvLog,
+            logger: &[Logger::LoggerRoot(Level::Debug)],
         }
     }
 }
 
-pub enum LogImplType {
+pub enum LogProvider {
     EnvLog,
     Tracing,
 }
@@ -48,13 +55,6 @@ pub enum Level {
     Error,
     Trace,
     Off,
-}
-
-pub fn init(log_defaults: LogDefaults) -> crate::Result<()> {
-    match log_defaults.log_type {
-        LogImplType::EnvLog => env_log::init(log_defaults.default_level),
-        LogImplType::Tracing => tracing::init(log_defaults.default_level)
-    }
 }
 
 fn get_log_level(default_level: &Level) -> crate::Result<&Level> {
@@ -88,30 +88,6 @@ impl Display for Level {
             Level::Error => write!(f, "error"),
             Level::Trace => write!(f, "trace"),
             Level::Off => write!(f, "off"),
-        }
-    }
-}
-
-impl From<&Level> for log::LevelFilter {
-    fn from(value: &Level) -> Self {
-        match value {
-            Level::Info => log::LevelFilter::Info,
-            Level::Debug => log::LevelFilter::Debug,
-            Level::Error => log::LevelFilter::Error,
-            Level::Trace => log::LevelFilter::Trace,
-            Level::Off => log::LevelFilter::Off,
-        }
-    }
-}
-
-impl From<&Level> for tracing_subscriber::filter::LevelFilter {
-    fn from(value: &Level) -> Self {
-        match value {
-            Level::Info => tracing_subscriber::filter::LevelFilter::INFO,
-            Level::Debug => tracing_subscriber::filter::LevelFilter::DEBUG,
-            Level::Error => tracing_subscriber::filter::LevelFilter::ERROR,
-            Level::Trace => tracing_subscriber::filter::LevelFilter::TRACE,
-            Level::Off => tracing_subscriber::filter::LevelFilter::OFF,
         }
     }
 }
