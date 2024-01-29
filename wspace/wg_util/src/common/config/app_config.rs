@@ -1,6 +1,5 @@
 use std::env;
 use std::ffi::OsStr;
-use std::ops::ControlFlow;
 use std::path::Path;
 use std::sync::OnceLock;
 
@@ -49,25 +48,14 @@ pub trait ConfigInit {
 
     fn init_with_files_and_required<T: AsRef<Path>>(&self, sources: &[(T, bool)], env_override: bool) -> Result<&Model> {
         let sources = sources.iter()
-            .try_fold(Ok(Vec::new()),
+            .try_fold(&mut Vec::new(),
                       |res, (path, required)| {
-                          match get_type(path) {
-                              Ok(format) => {
-                                  let res = res.map(|mut v| {
-                                      let file = File::new(path.as_ref().to_str().unwrap(), format).required(*required);
-                                      v.push(file);
-                                      v
-                                  });
-                                  ControlFlow::Continue(res)
-                              }
-                              Err(e) => ControlFlow::Break(Err(e)),
-                          }
-                      });
-
-        let sources = match sources {
-            ControlFlow::Continue(res) |
-            ControlFlow::Break(res) => res
-        }?;
+                          let path_as_string = path.as_ref().to_str().with_context(|| "Cannot convert path to String")?;
+                          get_type(path)
+                              .map(|format| res.push(File::new(path_as_string, format).required(*required)))
+                              .and(Ok(res))
+                      },
+            )?.to_owned();
         self.init_with_sources(sources, env_override)
     }
 

@@ -8,5 +8,5 @@ use wg_util::Result;
 
 fn main() -> Result<()> {
     env::set_var("db.user", "vlad2");
-    rust_app::init(LogDefaults::default(), false)
+    rust_app::init(LogConfig::default(), true)
 }
