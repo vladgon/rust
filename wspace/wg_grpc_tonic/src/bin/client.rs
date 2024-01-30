@@ -1,6 +1,8 @@
+use std::backtrace::Backtrace;
+
 use futures::{FutureExt, StreamExt, TryStreamExt};
 use log::{error, info};
-use tonic::Response;
+use tonic::{Response, Status};
 
 use wg_util::{ResultExt, Tap};
 use wg_util::common::config::app_config::settings;
@@ -21,7 +23,8 @@ async fn main() -> wg_util::Result<()> {
     rust_app::init(LogConfig::new(Tracing,
                                   &[
                                       Logger::LoggerRoot(Info),
-                                      Logger::LoggerForModule("client", Debug)]),
+                                      Logger::LoggerForModule("client", Debug)
+                                  ]),
                    false)?;
 
     let host = settings()?.grpc.host.as_str();
@@ -34,11 +37,15 @@ async fn main() -> wg_util::Result<()> {
                         name: "Tonic".into(),
                     });
                 GreeterClient::connect(format!("http://{host}:{port}"))
-                    .then(|client| async move { client.unwrap().say_hello(request).await })
+                    .then(|client| async move {
+                        client.map_err(|e| Status::from_error(e.into()))?.say_hello(request).await
+                    })
                     .map(|result| {
-                        result.tap(|response| {
-                            info!("Response as Json: {}",  serde_json::to_string(response.get_ref()).unwrap());
+                        result.do_on_ok_ignore_result(|response| {
+                            info!("Response as Json: {}",  serde_json::to_string(response.get_ref())
+                            .map_err(|e| Status::from_error(e.into()))?);
                             info!("RESPONSE={:?}", response.get_ref());
+                            Ok(())
                         })
                     })
                     .await
@@ -48,7 +55,8 @@ async fn main() -> wg_util::Result<()> {
         .map(|r| r?.into_std_error())
         .try_collect::<Vec<Response<HelloReply>>>()
         .await
-        .tap_err(|e| error!("Error {}", &e))?;
+        .do_on_err(|e| error!("Error {}\n{}", e, Backtrace::capture()))
+        ?;
     info!("Responses count {}", responses.len());
     Ok(())
 }
