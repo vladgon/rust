@@ -10,6 +10,7 @@ use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::Debug;
 use wg_util::common::config::log::LogProvider::Tracing;
+use wg_util::common::config::model::Grpc;
 use wg_util::common::config::rust_app;
 use wg_util::ResultExt;
 
@@ -36,8 +37,7 @@ async fn main() -> wg_util::Result<()> {
     rust_app::init(LogConfig::new(Tracing,
                                   &[Logger::LoggerForModule("server", Debug)]),
                    false)?;
-    let host = settings()?.grpc.host.as_str();
-    let port = settings()?.grpc.port.as_str();
+    let Grpc { host, port } = &settings()?.grpc;
     let addr = format!("{host}:{port}").parse()?;
     let greeter = MyGreeter::default();
 

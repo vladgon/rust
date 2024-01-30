@@ -15,7 +15,7 @@ pub trait Tap<T, E> {
     fn do_on_ok<F: FnOnce(&T)>(self, op: F) -> Self;
     fn do_on_ok_ignore_result<V, F: FnOnce(&T) -> std::result::Result<V, E>>(self, op: F) -> Self;
     fn do_on_err<F: FnOnce(&E)>(self, op: F) -> Self;
-    fn do_on_err_ignore_result<EE, F: FnOnce(&E) -> std::result::Result<T, EE>>(self, op: F) -> Self;
+    fn do_on_err_ignore_result<EE: Into<E>, F: FnOnce(&E) -> std::result::Result<T, EE>>(self, op: F) -> Self;
 }
 
 impl<T, E> Tap<T, E> for std::result::Result<T, E> {
@@ -30,16 +30,7 @@ impl<T, E> Tap<T, E> for std::result::Result<T, E> {
     }
 
     fn do_on_ok_ignore_result<V, F: FnOnce(&T) -> std::result::Result<V, E>>(self, op: F) -> Self {
-        match self {
-            Ok(t) => {
-                let res = op(&t);
-                match res {
-                    Ok(_) => Ok(t),
-                    Err(e) => Err(e)
-                }
-            }
-            Err(e) => Err(e),
-        }
+        self.map(|t| op(&t).map(|_| t))?
     }
 
 
@@ -53,12 +44,14 @@ impl<T, E> Tap<T, E> for std::result::Result<T, E> {
         }
     }
 
-    fn do_on_err_ignore_result<EE, F: FnOnce(&E) -> std::result::Result<T, EE>>(self, op: F) -> Self {
+    fn do_on_err_ignore_result<EE: Into<E>, F: FnOnce(&E) -> std::result::Result<T, EE>>(self, op: F) -> Self {
         match self {
             Ok(t) => Ok(t),
             Err(e) => {
-                _ = op(&e);
-                Err(e)
+                match op(&e) {
+                    Ok(_) => Err(e),
+                    Err(ee) => Err(ee.into())
+                }
             }
         }
     }

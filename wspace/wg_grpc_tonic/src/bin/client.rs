@@ -9,6 +9,7 @@ use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::{Debug, Info};
 use wg_util::common::config::log::LogProvider::Tracing;
+use wg_util::common::config::model::Grpc;
 use wg_util::common::config::rust_app;
 
 use crate::hello_world::helloworld::{HelloReply, HelloRequest};
@@ -27,8 +28,7 @@ async fn main() -> wg_util::Result<()> {
                                   ]),
                    false)?;
 
-    let host = settings()?.grpc.host.as_str();
-    let port = settings()?.grpc.port.as_str();
+    let Grpc { host, port } = &settings()?.grpc;
     let responses = futures::stream::iter(0..1_000)
         .map(|_| {
             tokio::spawn(async move {
@@ -55,8 +55,7 @@ async fn main() -> wg_util::Result<()> {
         .map(|r| r?.into_std_error())
         .try_collect::<Vec<Response<HelloReply>>>()
         .await
-        .do_on_err(|e| error!("Error {}\n{}", e, Backtrace::capture()))
-        ?;
+        .do_on_err(|e| error!("Error {}\n{}", e, Backtrace::capture()))?;
     info!("Responses count {}", responses.len());
     Ok(())
 }
