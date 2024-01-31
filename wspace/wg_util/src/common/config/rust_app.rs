@@ -8,10 +8,20 @@ use crate::common::config::clap::AppConfigCLAP;
 use crate::common::config::log::LogConfig;
 use crate::Result;
 
-pub fn init(log_defaults: LogConfig, use_clap: bool) -> Result<()> {
-    common::config::log::init(log_defaults)?;
+pub enum Options<'a> {
+    Default,
+    LogWithClap(LogConfig<'a>, bool),
+}
 
-    // the first argument is 'inner:<command name>'
+pub fn init(options: Options) -> Result<()> {
+    let (log_config, use_clap) = match options {
+        Options::Default => (LogConfig::default(), false),
+        Options::LogWithClap(log_config, use_clap) => (log_config, use_clap)
+    };
+
+    common::config::log::init(&log_config)?;
+
+    // the first command line argument is 'inner:<command name>'
     let use_clap = use_clap || args().len() > 1;
 
     let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };

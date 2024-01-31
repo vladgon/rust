@@ -12,11 +12,11 @@ use wg_kafka::consumer;
 use wg_kafka::model::SampleData;
 use wg_util::common::config;
 use wg_util::common::config::app_config;
-use wg_util::common::config::log::LogConfig;
+use wg_util::common::config::rust_app::Options;
 use wg_util::Result;
 
 fn main() -> Result<()> {
-    config::rust_app::init(LogConfig::default(), false)?;
+    config::rust_app::init(Options::Default)?;
     let settings = app_config::settings()?;
 
     let topic = settings.kafka.topic.to_owned();
@@ -36,20 +36,20 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
         }
 
         _ = mss.iter()
-            .map(|ms| {
-                use rayon::prelude::*;
-                ms.messages()
-                    .par_iter()
-                    .for_each(|mes| debug!("{}:  {}:{}@{}: {:?}",
+               .map(|ms| {
+                   use rayon::prelude::*;
+                   ms.messages()
+                     .par_iter()
+                     .for_each(|mes| debug!("{}:  {}:{}@{}: {:?}",
                         counter.fetch_add(1, Ordering::Relaxed),
                         ms.topic(),
                         ms.partition(),
                         mes.offset,
                         serde_json::from_slice::<SampleData>(mes.value)
                 ));
-                ms
-            })
-            .try_for_each(|ms: MessageSet| consumer.consume_messageset(ms));
+                   ms
+               })
+               .try_for_each(|ms: MessageSet| consumer.consume_messageset(ms));
         consumer.commit_consumed()?
     }
 }

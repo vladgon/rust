@@ -6,8 +6,8 @@ use protobuf::well_known_types::timestamp::Timestamp;
 
 use proto_generated::sample;
 use sample::Shirt;
-use wg_util::common::config::log::LogConfig;
 use wg_util::common::config::rust_app;
+use wg_util::common::config::rust_app::Options;
 
 use crate::proto_generated::sample1::{Foo, PhoneType};
 use crate::proto_generated::sample::shirt::Size;
@@ -17,7 +17,7 @@ mod proto_generated {
 }
 
 fn main() -> wg_util::Result<()> {
-    rust_app::init(LogConfig::default(), false)?;
+    rust_app::init(Options::Default)?;
 
     let shirt = Shirt {
         color: Some("Green".to_string()),

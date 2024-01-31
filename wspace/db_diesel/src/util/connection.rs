@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::error::Error;
 
 use diesel::prelude::*;
 use log::debug;
@@ -14,19 +14,27 @@ use wg_util::ResultTap;
 /// ```
 /// use diesel::connection::SimpleConnection;
 /// use db_diesel::util::connection::establish_connection;
-/// assert!(establish_connection()?.batch_execute("Select 1").is_ok(), "Cannot get Connection")
+/// use wg_util::common::config::rust_app;
+/// /// use wg_util::common::config::rust_app;
+/// use wg_util::common::config::rust_app::Options;
+/// rust_app::init(Options::Default).unwrap();
+/// assert!(establish_connection().unwrap().batch_execute("Select 1").is_ok(), "Cannot get Connection");
+///
 ///```
 ///
 ///```
 /// use db_diesel::util::connection::db_url;
-/// use wg_util::common::config::app_config;
+/// use wg_util::common::config::rust_app;
+/// use wg_util::common::config::log::LogConfig;
+/// use wg_util::common::config::rust_app::Options;
+/// rust_app::init(Options::Default).unwrap();
 /// assert_eq!(db_url().is_ok(), true)
 /// ```
 
 pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
     db_url()
         .tap_ok(|url| debug!("Connecting {:?}", url))
-        .map(|s| s.establish_connection())?
+        .establish_connection()
 }
 
 pub fn db_url() -> ConnectionResult<String> {
@@ -40,19 +48,19 @@ pub fn db_url() -> ConnectionResult<String> {
 }
 
 
-pub trait MySqlConnectionT {
+pub trait MySqlConnectionExt {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection>;
 }
 
-impl MySqlConnectionT for String {
+impl MySqlConnectionExt for String {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
         MysqlConnection::establish(self)
     }
 }
 
-impl<E: Debug> MySqlConnectionT for Result<String, E> {
+impl<E: Error> MySqlConnectionExt for Result<String, E> {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
-        MysqlConnection::establish(self.as_ref()
-                                       .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?)
+        self.as_ref().map(|s| s.establish_connection())
+            .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?
     }
 }

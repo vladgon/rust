@@ -6,11 +6,11 @@ use log::debug;
 
 use wg_kafka::model;
 use wg_util::common::config;
-use wg_util::common::config::log::LogConfig;
+use wg_util::common::config::rust_app::Options;
 use wg_util::ResultExt;
 
 fn main() -> wg_util::Result<()> {
-    config::rust_app::init(LogConfig::default(), false)?;
+    config::rust_app::init(Options::Default)?;
     let settings = config::app_config::settings()?;
 
     let mut producer = wg_kafka::producer(&[settings.kafka.broker.clone()])?;
@@ -23,7 +23,7 @@ fn main() -> wg_util::Result<()> {
             })?;
             debug!("Publishing {data}");
             producer.send(&Record::from_value(topic, data))
-                .into_std_error()
+                    .into_std_error()
         })
         .map(|_| debug!("Done!"))
 }

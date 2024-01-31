@@ -28,7 +28,7 @@ impl<'a> LogConfig<'a> {
     }
 }
 
-pub fn init(log_defaults: LogConfig) -> crate::Result<()> {
+pub fn init(log_defaults: &LogConfig) -> crate::Result<()> {
     match log_defaults.kind {
         LogProvider::EnvLog => env_log::init(log_defaults.logger),
         LogProvider::Tracing => tracing::init(log_defaults.logger)
