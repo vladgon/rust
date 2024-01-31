@@ -1,4 +1,6 @@
 use crate::common::config::log::Logger;
+use crate::Result;
+use crate::ResultTap;
 
 pub fn init(levels: &[Logger]) -> crate::Result<()> {
     tracing_subscriber::fmt()
@@ -9,20 +11,17 @@ pub fn init(levels: &[Logger]) -> crate::Result<()> {
         .with_thread_ids(true)
         .with_level(true)
         .with_env_filter(
-            {
-                let res = levels.iter()
-                                .map(|log_entry| {
-                                    match log_entry {
-                                        Logger::LoggerForModule(module, level) => format!("{module}={level}"),
-                                        Logger::LoggerRoot(level) => format!("{level}"),
-                                    }
-                                })
-                    // .map(|log_entry: LogEntry| format!("{}{}", _0.as_ref().map(|v| format!("{v}=")).unwrap_or("".into()), _1.to_string()))
-                                .collect::<Vec<String>>()
-                                .join(",");
-                println!("Setting Tracing filter config {res}");
-                res
-            }
+            Result::Ok(levels.iter()
+                             .map(|log_entry| {
+                                 match log_entry {
+                                     Logger::LoggerForModule(module, level) => format!("{module}={level}"),
+                                     Logger::LoggerRoot(level) => format!("{level}"),
+                                 }
+                             })
+                             .collect::<Vec<String>>()
+                             .join(","))
+                .tap_ok(|res| println!("Setting Tracing filter config {res}"))
+                .unwrap()
         )
         .init();
     Ok(())

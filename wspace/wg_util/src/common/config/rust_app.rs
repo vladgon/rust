@@ -1,3 +1,5 @@
+use std::env::args;
+
 use log::debug;
 
 use crate::common;
@@ -8,6 +10,9 @@ use crate::Result;
 
 pub fn init(log_defaults: LogConfig, use_clap: bool) -> Result<()> {
     common::config::log::init(log_defaults)?;
+
+    // the first argument is 'inner:<command name>'
+    let use_clap = use_clap || args().len() > 1;
 
     let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
     let files: Vec<&str> = args.config_files.split(',').collect();

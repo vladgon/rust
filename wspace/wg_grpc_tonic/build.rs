@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use prost_wkt_build::{FileDescriptorSet, Message};
 
-use wg_util::{info_build, Tap};
+use wg_util::{info_build, ResultTap};
 
 const PROTO_ROOT: &str = "proto";
 

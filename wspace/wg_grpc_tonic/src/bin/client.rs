@@ -4,7 +4,7 @@ use futures::{FutureExt, StreamExt, TryStreamExt};
 use log::{error, info};
 use tonic::{Response, Status};
 
-use wg_util::{ResultExt, Tap};
+use wg_util::{ResultExt, ResultTap, StdErrorBox};
 use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::{Debug, Info};
@@ -45,7 +45,7 @@ async fn main() -> wg_util::Result<()> {
                             info!("Response as Json: {}",  serde_json::to_string(response.get_ref())
                             .map_err(|e| Status::from_error(e.into()))?);
                             info!("RESPONSE={:?}", response.get_ref());
-                            Ok(())
+                            Ok::<_, StdErrorBox>(())
                         })
                     })
                     .await
