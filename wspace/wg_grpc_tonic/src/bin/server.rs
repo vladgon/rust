@@ -1,5 +1,6 @@
 use std::time::SystemTime;
 
+use log::debug;
 use prost_wkt_types::Timestamp;
 use tonic::{Request, Response, Status, transport::Server};
 
@@ -22,7 +23,7 @@ pub struct MyGreeter {}
 #[tonic::async_trait]
 impl Greeter for MyGreeter {
     async fn say_hello(&self, request: Request<HelloRequest>) -> Result<Response<HelloReply>, Status> {
-        println!("Got a request: {:?}", request);
+        debug!("Got a request: {:?}", request);
         let reply = HelloReply {
             message: format!("Hello {}!", request.into_inner().name),
             created_on: Timestamp::from(SystemTime::now()).into(),
@@ -35,7 +36,9 @@ impl Greeter for MyGreeter {
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
     rust_app::init(LogConfig::new(Tracing,
-                                  &[Logger::LoggerForModule("server", Debug)]),
+                                  &[Logger::LoggerForModule("wg_util", Debug),
+                                      Logger::LoggerForModule("server", Debug)
+                                  ]),
                    false)?;
     let Grpc { host, port } = &settings()?.grpc;
     let addr = format!("{host}:{port}").parse()?;

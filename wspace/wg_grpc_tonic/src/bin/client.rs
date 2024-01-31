@@ -41,7 +41,7 @@ async fn main() -> wg_util::Result<()> {
                         client.map_err(|e| Status::from_error(e.into()))?.say_hello(request).await
                     })
                     .map(|result| {
-                        result.do_on_ok_ignore_result(|response| {
+                        result.tap_ok_ignore_result(|response| {
                             info!("Response as Json: {}",  serde_json::to_string(response.get_ref())
                             .map_err(|e| Status::from_error(e.into()))?);
                             info!("RESPONSE={:?}", response.get_ref());
@@ -55,7 +55,7 @@ async fn main() -> wg_util::Result<()> {
         .map(|r| r?.into_std_error())
         .try_collect::<Vec<Response<HelloReply>>>()
         .await
-        .do_on_err(|e| error!("Error {}\n{}", e, Backtrace::capture()))?;
+        .tap_err(|e| error!("Error {}\n{}", e, Backtrace::capture()))?;
     info!("Responses count {}", responses.len());
     Ok(())
 }

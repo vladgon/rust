@@ -11,15 +11,15 @@ pub fn init(levels: &[Logger]) -> crate::Result<()> {
         .with_env_filter(
             {
                 let res = levels.iter()
-                    .map(|log_entry| {
-                        match log_entry {
-                            Logger::LoggerForModule(module, level) => format!("{module}={}", level.to_string()),
-                            Logger::LoggerRoot(level) => format!("{}", level.to_string()),
-                        }
-                    })
+                                .map(|log_entry| {
+                                    match log_entry {
+                                        Logger::LoggerForModule(module, level) => format!("{module}={level}"),
+                                        Logger::LoggerRoot(level) => format!("{level}"),
+                                    }
+                                })
                     // .map(|log_entry: LogEntry| format!("{}{}", _0.as_ref().map(|v| format!("{v}=")).unwrap_or("".into()), _1.to_string()))
-                    .collect::<Vec<String>>()
-                    .join(",");
+                                .collect::<Vec<String>>()
+                                .join(",");
                 println!("Setting Tracing filter config {res}");
                 res
             }

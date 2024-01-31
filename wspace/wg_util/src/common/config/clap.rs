@@ -2,8 +2,10 @@ use std::fs::metadata;
 use std::path::Path;
 
 use clap::Parser;
+use log::debug;
 
 use crate::common::io::cargo_work_space_home;
+use crate::Tap;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -18,16 +20,23 @@ pub struct AppConfigCLAP {
     pub env_override: Option<bool>,
 }
 
+const CONFIG_FILE: &str = "resources/app_config.yaml";
+
 impl AppConfigCLAP {
     ///Parses command line arguments
     pub fn init_clap() -> Self {
         Self::parse()
     }
     fn derive_path() -> String {
-        let cargo_home = cargo_work_space_home().unwrap();
-        let config_path = Path::new("wg_sample_app/resources/app_config.yaml");
-        let path = &Path::new(cargo_home.as_str()).join(config_path);
-        assert!(metadata(path).unwrap().is_file(), "File should exists");
+        let path = cargo_work_space_home()
+            .map(|cargo_home| {
+                let path = format!("wg_sample_app/{CONFIG_FILE}");
+                let config_path = Path::new(path.as_str());
+                Path::new(cargo_home.as_str()).join(config_path)
+            })
+            .tap_err(|e| debug!("{e}, trying {:?}",CONFIG_FILE))
+            .unwrap_or_else(|_| Path::new(CONFIG_FILE).into());
+        assert!(metadata(&path).unwrap().is_file(), "File should exists");
         path.to_str().unwrap().to_string()
     }
 }

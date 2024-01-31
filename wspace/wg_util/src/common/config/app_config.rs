@@ -8,7 +8,7 @@ use config::{Config, Environment, File, FileFormat, Map, Source};
 use config::FileFormat::{Json, Json5, Yaml};
 use log::debug;
 
-use crate::{Result, ResultExt};
+use crate::{Result, ResultExt, Tap};
 use crate::common::config::model::Model;
 
 #[derive(Default)]
@@ -18,8 +18,8 @@ impl Init for AppConfig {}
 
 pub fn settings<'a>() -> Result<&'a Model> {
     CONFIG.get()
-        .with_context(|| "Settings are not initialized, call AppConfig::default().init variant ")
-        .into_std_error()
+          .with_context(|| "Settings are not initialized, call AppConfig::default().init variant ")
+          .into_std_error()
 }
 
 static CONFIG: OnceLock<Model> = OnceLock::new();
@@ -41,21 +41,21 @@ fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
 pub trait Init {
     fn init_with_files<T: AsRef<Path>>(&self, sources: &[T], env_override: bool) -> Result<&Model> {
         let t2: Vec<(&T, bool)> = sources.iter()
-            .map(|t| (t, true))
-            .collect();
+                                         .map(|t| (t, true))
+                                         .collect();
         self.init_with_files_and_required(&t2, env_override)
     }
 
     fn init_with_files_and_required<T: AsRef<Path>>(&self, sources: &[(T, bool)], env_override: bool) -> Result<&Model> {
         let sources = sources.iter()
-            .try_fold(&mut Vec::new(),
-                      |res, (path, required)| {
-                          let path_as_str = path.as_ref().to_str().with_context(|| "Cannot convert path to String")?;
-                          get_format(path)
-                              .map(|format| res.push(File::new(path_as_str, format).required(*required)))
-                              .and(Ok(res))
-                      },
-            )?
+                             .try_fold(&mut Vec::new(),
+                                       |res, (path, required)| {
+                                           let path_as_str = path.as_ref().to_str().with_context(|| "Cannot convert path to String")?;
+                                           get_format(path)
+                                               .map(|format| res.push(File::new(path_as_str, format).required(*required)))
+                                               .and(Ok(res))
+                                       },
+                             )?
             .to_owned();
         self.init_with_sources(sources, env_override)
     }
@@ -64,7 +64,7 @@ pub trait Init {
         assert!(CONFIG.get().is_none(), "CONFIG is already initialized");
 
         let mut builder = sources.into_iter()
-            .fold(Config::builder(), |b, source| b.add_source(source));
+                                 .fold(Config::builder(), |b, source| b.add_source(source));
 
         if env_override {
             let env_map = Some(env::vars().collect::<Map<String, String>>());
@@ -74,10 +74,7 @@ pub trait Init {
             .build()
             .map(|setting| setting.try_deserialize::<Model>().unwrap_or_else(|e| panic!("{}", e)))
             .map(|app_config| CONFIG.get_or_init(|| app_config))
-            .map(|app_config| {
-                debug!("Processed config {:?}", app_config);
-                app_config
-            })
+            .tap_ok(|app_config| debug!("Processed config \n{}", serde_json::to_string_pretty(&app_config).unwrap()))
             .into_std_error()
     }
 }

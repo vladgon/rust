@@ -11,7 +11,7 @@ pub fn init(log_defaults: LogConfig, use_clap: bool) -> Result<()> {
 
     let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
     let files: Vec<&str> = args.config_files.split(',').collect();
-    debug!("Using config files: {}", args.config_files);
+    debug!("Using config files: {:?}", args.config_files);
     AppConfig::default().init_with_files(&files, args.env_override.unwrap())?;
     Ok(())
 }

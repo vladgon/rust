@@ -1,13 +1,13 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Model {
     pub db: DB,
     pub kafka: Kafka,
     pub grpc: Grpc,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[allow(non_snake_case)]
 pub struct DB {
     pub url: String,
@@ -16,7 +16,7 @@ pub struct DB {
     pub noValue: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[allow(non_snake_case)]
 pub struct Kafka {
     pub broker: String,
@@ -24,7 +24,7 @@ pub struct Kafka {
     pub pollSleep: u64,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[allow(non_snake_case)]
 pub struct Grpc {
     pub host: String,
