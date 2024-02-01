@@ -6,7 +6,7 @@ members = [
     "web_server",
     "wg_sample_app",
     "wg_kafka",
-#    "wg_proto",
+    #    "wg_proto",
     "wg_protobuf_goog",
     "wg_grpc_tonic",
 ]
@@ -15,7 +15,7 @@ members = [
 wg_util = { path = "wg_util" }
 anyhow = "1"
 log = "0"
-config = "0.13"
+config = "0.14"
 env_logger = "0.11.0"
 serde = "1"
 clap = "4"
@@ -30,3 +30,7 @@ chrono = "0.4.31"
 serde_json = "1.0"
 rand = "0.8"
 rayon = "1"
+prost = "0.12"
+prost-wkt = "0.5"
+prost-wkt-types = "0.5"
+tonic = "0.10"
