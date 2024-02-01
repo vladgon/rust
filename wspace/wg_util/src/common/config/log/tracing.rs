@@ -20,7 +20,7 @@ pub fn init(levels: &[Logger]) -> crate::Result<()> {
                              })
                              .collect::<Vec<String>>()
                              .join(","))
-                .tap_ok(|res| println!("Setting Tracing filter config {res}"))
+                .tap(|res| println!("Setting Tracing filter config {res}"))
                 .unwrap()
         )
         .init();

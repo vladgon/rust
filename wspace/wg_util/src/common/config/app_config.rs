@@ -75,7 +75,7 @@ pub trait Init {
             .build()
             .map(|setting| setting.try_deserialize::<Model>().unwrap_or_else(|e| panic!("{}", e)))
             .map(|app_config| CONFIG.get_or_init(|| app_config))
-            .tap_ok(|app_config| debug!("Processed config \n{}", serde_json::to_string_pretty(&app_config).unwrap()))
+            .tap(|app_config| debug!("Processed config \n{}", serde_json::to_string_pretty(&app_config).unwrap()))
             .into_std_error()
     }
 }

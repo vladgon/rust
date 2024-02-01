@@ -43,10 +43,9 @@ async fn main() -> wg_util::Result<()> {
                         client.map_err(|e| Status::from_error(e.into()))?.say_hello(request).await
                     })
                     .map(|result| {
-                        result.tap_ok_ignore_result(|response| {
-                            info!("Response as Json: {}",  serde_json::to_string(response.get_ref())
-                            .map_err(|e| Status::from_error(e.into()))?);
-                            info!("RESPONSE={:?}", response.get_ref());
+                        result.tap_ignore_result(|ok| {
+                            info!("Response as Json: {}",
+                                serde_json::to_string(ok.get_ref()).map_err(|e| Status::from_error(e.into()))?);
                             Ok::<_, StdErrorBox>(())
                         })
                     })

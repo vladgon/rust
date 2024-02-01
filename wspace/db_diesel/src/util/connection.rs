@@ -33,7 +33,7 @@ use wg_util::ResultTap;
 
 pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
     db_url()
-        .tap_ok(|url| debug!("Connecting {:?}", url))
+        .tap(|url| debug!("Connecting {:?}", url))
         .establish_connection()
 }
 
