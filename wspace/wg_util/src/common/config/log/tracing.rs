@@ -18,7 +18,7 @@ pub fn init(levels: &[Logger]) -> crate::Result<()> {
                                      Logger::LoggerRoot(level) => format!("{level}"),
                                  }
                              })
-                             .collect::<Vec<String>>()
+                             .collect::<Vec<_>>()
                              .join(","))
                 .tap(|res| println!("Setting Tracing filter config {res}"))
                 .unwrap()

@@ -12,7 +12,7 @@ mod env_log;
 
 pub enum Logger<'a> {
     LoggerRoot(Level),
-    ///[&str] log module name, [Level]
+    ///[&str] log module name, [Level] log level
     LoggerForModule(&'a str, Level),
 }
 

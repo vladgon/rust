@@ -1,5 +1,6 @@
 use std::env::args;
 
+use anyhow::Context;
 use log::debug;
 
 use crate::common;
@@ -25,8 +26,8 @@ pub fn init(options: Options) -> Result<()> {
     let use_clap = use_clap || args().len() > 1;
 
     let args = if use_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
-    let files: Vec<&str> = args.config_files.split(',').collect();
     debug!("Using config files: {:?}", args.config_files);
-    AppConfig::default().init_with_files(&files, args.env_override.unwrap())?;
+    let files = args.config_files.split(',').collect::<Vec<_>>();
+    AppConfig::default().init_with_files(&files, args.env_override.with_context(|| "cannot process env_override")?)?;
     Ok(())
 }

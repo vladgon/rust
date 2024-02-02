@@ -41,6 +41,6 @@ fn main() -> wg_util::Result<()> {
     let desc = Shirt::new().descriptor_dyn();
     debug!("Dynamic fields for Shirt {:?}", desc.fields()
         .map(|fd|fd.full_name().to_owned())
-        .collect::<Vec<String>>());
+        .collect::<Vec<_>>());
     Ok(())
 }

@@ -41,9 +41,9 @@ fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
 
 pub trait Init {
     fn init_with_files<T: AsRef<Path>>(&self, sources: &[T], env_override: bool) -> Result<&Model> {
-        let t2: Vec<(&T, bool)> = sources.iter()
-                                         .map(|t| (t, true))
-                                         .collect();
+        let t2 = sources.iter()
+                        .map(|t| (t, true))
+                        .collect::<Vec<_>>();
         self.init_with_files_and_required(&t2, env_override)
     }
 
@@ -68,7 +68,7 @@ pub trait Init {
                                  .fold(Config::builder(), |b, source| b.add_source(source));
 
         if env_override {
-            let env_map = Some(env::vars().collect::<Map<String, String>>());
+            let env_map = Some(env::vars().collect::<Map<_, _>>());
             builder = builder.add_source(Environment::default().source(env_map));
         }
         builder

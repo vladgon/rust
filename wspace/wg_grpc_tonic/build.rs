@@ -48,6 +48,6 @@ fn files(path: impl AsRef<Path>) -> Result<Vec<PathBuf>, Error> {
                                       .map(DirEntry::path)
                                       .tap(|path| info_build!("Processing file {:?}", path))
                                       .unwrap())
-            .collect::<Vec<PathBuf>>()
+            .collect::<Vec<_>>()
         )
 }
