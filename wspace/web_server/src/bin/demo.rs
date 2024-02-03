@@ -13,11 +13,14 @@ use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::Debug;
 use wg_util::common::config::log::LogProvider::Tracing;
 use wg_util::common::config::rust_app;
+use wg_util::common::config::rust_app::Options::LogWithClap;
 
 #[ctor]
 fn init() {
     spawn(|| {
-        _ = rust_app::init(LogConfig::new(Tracing, &[Logger::LoggerRoot(Debug)]), false);
+        _ = rust_app::init(LogWithClap(LogConfig::new(Tracing, &[Logger::LoggerRoot(Debug)]),
+                                           false)
+            );
     })
         .join()
         .expect("Failed to init the app");

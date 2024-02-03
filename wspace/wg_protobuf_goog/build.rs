@@ -41,6 +41,6 @@ fn files<T: AsRef<Path>>(path: T) -> Result<Vec<PathBuf>> {
             let path = d.unwrap_or_else(|e| panic!("{}", e)).path();
             info_build!("Processing {}", path.to_str().unwrap());
             path
-        }).collect::<Vec<PathBuf>>())
+        }).collect::<Vec<_>>())
         .into_std_error()
 }

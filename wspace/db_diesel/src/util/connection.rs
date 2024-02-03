@@ -1,10 +1,10 @@
-use std::fmt::Debug;
+use std::error::Error;
 
 use diesel::prelude::*;
 use log::debug;
 
 use wg_util::common::config::app_config;
-use wg_util::common::config::model::Model;
+use wg_util::ResultTap;
 
 ///
 /// Establish Connection
@@ -14,47 +14,53 @@ use wg_util::common::config::model::Model;
 /// ```
 /// use diesel::connection::SimpleConnection;
 /// use db_diesel::util::connection::establish_connection;
-/// assert!(establish_connection()?.batch_execute("Select 1").is_ok(), "Cannot get Connection")
+/// use wg_util::common::config::rust_app;
+/// /// use wg_util::common::config::rust_app;
+/// use wg_util::common::config::rust_app::Options;
+/// rust_app::init(Options::Default).unwrap();
+/// assert!(establish_connection().unwrap().batch_execute("Select 1").is_ok(), "Cannot get Connection");
+///
 ///```
 ///
 ///```
 /// use db_diesel::util::connection::db_url;
-/// use wg_util::common::config::app_config;
+/// use wg_util::common::config::rust_app;
+/// use wg_util::common::config::log::LogConfig;
+/// use wg_util::common::config::rust_app::Options;
+/// rust_app::init(Options::Default).unwrap();
 /// assert_eq!(db_url().is_ok(), true)
 /// ```
 
 pub fn establish_connection() -> ConnectionResult<MysqlConnection> {
-    debug!("Got Connection Url {:?}", db_url());
-    db_url().map(|s| s.to_string().establish_connection())?
+    db_url()
+        .tap(|url| debug!("Connecting {:?}", url))
+        .establish_connection()
 }
 
 pub fn db_url() -> ConnectionResult<String> {
-    settings().map(|s|
-        s.db.url
-            .replace("${user}", s.db.user.as_str())
-            .replace("${password}", s.db.password.as_ref()
-                .unwrap_or(&String::new())))
+    app_config::settings()
+        .map(|s|
+            s.db.url
+             .replace("${user}", s.db.user.as_str())
+             .replace("${password}", s.db.password.as_ref()
+                                      .unwrap_or(&"".into())))
+        .map_err(|e| ConnectionError::InvalidConnectionUrl(e.to_string()))
 }
 
-fn settings<'a>() -> Result<&'a Model, ConnectionError> {
-    let settings = app_config::settings()
-        .map_err(|e| ConnectionError::InvalidConnectionUrl(e.to_string()));
-    settings
-}
 
-pub trait MySqlConnectionT {
+pub trait MySqlConnectionExt {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection>;
 }
 
-impl MySqlConnectionT for String {
+impl MySqlConnectionExt for String {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
         MysqlConnection::establish(self)
     }
 }
 
-impl<E: Debug> MySqlConnectionT for Result<String, E> {
+impl<E: Error> MySqlConnectionExt for Result<String, E> {
     fn establish_connection(&self) -> ConnectionResult<MysqlConnection> {
-        MysqlConnection::establish(self.as_ref()
-            .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?)
+        self.as_ref().map(|s| s.establish_connection())
+            .map_err(|e| ConnectionError::InvalidConnectionUrl(format!("{:?}", e)))?
     }
 }

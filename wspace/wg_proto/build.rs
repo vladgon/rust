@@ -3,7 +3,6 @@ use std::path::PathBuf;
 
 use prost_build::Config;
 use prost_wkt_build::{FileDescriptorSet, Message};
-
 use wg_util::info_build;
 
 const PROTO_ROOT: &str = "proto";
@@ -62,7 +61,7 @@ fn wkt(config: &mut Config) -> wg_util::Result<&mut Config> {
         })
         .compile_protos(FILE_NAMES.iter()
                             .map(|name| format!("{PROTO_ROOT}/{name}.proto"))
-                            .collect::<Vec<String>>()
+                            .collect::<Vec<_>>()
                             .as_ref(),
                         &[format!("{}/", PROTO_PACKAGE)])?;
     info_build!("Generating WKT descriptor_file:  {:?}",descriptor_file);

@@ -4,13 +4,14 @@ use futures::{FutureExt, StreamExt, TryStreamExt};
 use log::{error, info};
 use tonic::{Response, Status};
 
-use wg_util::{ResultExt, Tap};
+use wg_util::{ResultExt, ResultTap, StdErrorBox};
 use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::{Debug, Info};
 use wg_util::common::config::log::LogProvider::Tracing;
 use wg_util::common::config::model::Grpc;
 use wg_util::common::config::rust_app;
+use wg_util::common::config::rust_app::Options::LogWithClap;
 
 use crate::hello_world::helloworld::{HelloReply, HelloRequest};
 use crate::hello_world::helloworld::greeter_client::GreeterClient;
@@ -21,12 +22,13 @@ pub mod hello_world {
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
-    rust_app::init(LogConfig::new(Tracing,
-                                  &[
-                                      Logger::LoggerRoot(Info),
-                                      Logger::LoggerForModule("client", Debug)
-                                  ]),
-                   false)?;
+    rust_app::init(LogWithClap(LogConfig::new(Tracing,
+                                              &[
+                                                  Logger::LoggerRoot(Info),
+                                                  Logger::LoggerForModule("client", Debug)
+                                              ]),
+                               false)
+    )?;
 
     let Grpc { host, port } = &settings()?.grpc;
     let responses = futures::stream::iter(0..1_000)
@@ -41,11 +43,10 @@ async fn main() -> wg_util::Result<()> {
                         client.map_err(|e| Status::from_error(e.into()))?.say_hello(request).await
                     })
                     .map(|result| {
-                        result.tap_ok_ignore_result(|response| {
-                            info!("Response as Json: {}",  serde_json::to_string(response.get_ref())
-                            .map_err(|e| Status::from_error(e.into()))?);
-                            info!("RESPONSE={:?}", response.get_ref());
-                            Ok(())
+                        result.tap_ignore_result(|ok| {
+                            info!("Response as Json: {}",
+                                serde_json::to_string(ok.get_ref()).map_err(|e| Status::from_error(e.into()))?);
+                            Ok::<_, StdErrorBox>(())
                         })
                     })
                     .await

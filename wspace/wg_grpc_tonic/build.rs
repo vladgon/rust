@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use prost_wkt_build::{FileDescriptorSet, Message};
 
-use wg_util::{info_build, Tap};
+use wg_util::{info_build, ResultTap};
 
 const PROTO_ROOT: &str = "proto";
 
@@ -46,8 +46,8 @@ fn files(path: impl AsRef<Path>) -> Result<Vec<PathBuf>, Error> {
         .map(|read_dir| read_dir
             .map(|dir_entry| dir_entry.as_ref()
                                       .map(DirEntry::path)
-                                      .tap_ok(|path| info_build!("Processing file {:?}", path))
+                                      .tap(|path| info_build!("Processing file {:?}", path))
                                       .unwrap())
-            .collect::<Vec<PathBuf>>()
+            .collect::<Vec<_>>()
         )
 }

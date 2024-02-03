@@ -5,7 +5,7 @@ use clap::Parser;
 use log::debug;
 
 use crate::common::io::cargo_work_space_home;
-use crate::Tap;
+use crate::common::result_ext::ResultTap;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -34,7 +34,7 @@ impl AppConfigCLAP {
                 let config_path = Path::new(path.as_str());
                 Path::new(cargo_home.as_str()).join(config_path)
             })
-            .tap_err(|e| debug!("{e}, trying {:?}",CONFIG_FILE))
+            .tap_err(|e| debug!("{e}, trying {:?}", CONFIG_FILE))
             .unwrap_or_else(|_| Path::new(CONFIG_FILE).into());
         assert!(metadata(&path).unwrap().is_file(), "File should exists");
         path.to_str().unwrap().to_string()
