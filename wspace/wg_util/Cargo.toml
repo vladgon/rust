@@ -5,7 +5,7 @@ authors = ["vladgon <valdgon@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-config = { workspace = true, features = ["yaml"] }
+config = { workspace = true, features = ["yaml", "toml", "json", "json5"] }
 log = { workspace = true }
 env_logger = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

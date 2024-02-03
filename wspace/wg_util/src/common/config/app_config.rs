@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 
 use anyhow::{bail, Context};
 use config::{Config, Environment, File, FileFormat, Map, Source};
-use config::FileFormat::{Json, Json5, Yaml};
+use config::FileFormat::{Json, Json5, Toml, Yaml};
 use log::debug;
 
 use crate::{Result, ResultExt, ResultTap};
@@ -32,6 +32,7 @@ fn get_format<T: AsRef<Path>>(path: T) -> Result<FileFormat> {
                                      path_ref))
             .map(|ext| match ext.to_lowercase().as_str() {
                 "yaml" => Ok(Yaml),
+                "toml" => Ok(Toml),
                 "json" => Ok(Json),
                 "json5" => Ok(Json5),
                 _ => bail!("Extension {ext} is not supported, path {}", path_ref.to_str().unwrap_or("no extension"))
