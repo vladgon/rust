@@ -15,7 +15,8 @@ members = [
 wg_util = { path = "wg_util" }
 anyhow = "1"
 log = "0"
-config = "0.14"
+#regression in version 0.14.0 camel case is failing to deserialze
+config = "0.13.4"
 env_logger = "0.11.0"
 serde = "1"
 clap = "4"

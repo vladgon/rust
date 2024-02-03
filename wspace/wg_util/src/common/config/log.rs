@@ -1,9 +1,7 @@
 use std::env;
 use std::fmt::{Display, Formatter};
 
-use anyhow::bail;
-
-use crate::ResultExt;
+use crate::{ResultExt, StdErrorBox};
 
 pub const RUST_LOG: &str = "RUST_LOG";
 
@@ -23,9 +21,7 @@ pub struct LogConfig<'a> {
 
 
 impl<'a> LogConfig<'a> {
-    pub fn new(log_type: LogProvider, default_level: &'a [Logger]) -> Self {
-        LogConfig { kind: log_type, logger: default_level }
-    }
+    pub fn new(kind: LogProvider, logger: &'a [Logger]) -> Self { LogConfig { kind, logger } }
 }
 
 pub fn init(log_defaults: &LogConfig) -> crate::Result<()> {
@@ -66,7 +62,7 @@ fn get_log_level(default_level: &Level) -> crate::Result<&Level> {
 }
 
 impl TryFrom<&str> for &Level {
-    type Error = anyhow::Error;
+    type Error = StdErrorBox;
 
     fn try_from(value: &str) -> Result<Self, <&Level as TryFrom<&str>>::Error> {
         match value.to_lowercase().as_str() {
@@ -75,7 +71,7 @@ impl TryFrom<&str> for &Level {
             "error" => Ok(&Level::Error),
             "trace" => Ok(&Level::Trace),
             "off" => Ok(&Level::Off),
-            _ => bail!("Unsupported log level: {value}")
+            _ => { Err("Unsupported log level: {value}".into()) }
         }
     }
 }
