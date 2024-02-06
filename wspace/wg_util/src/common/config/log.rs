@@ -1,7 +1,7 @@
 use std::env;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
-use crate::{ResultExt, StdErrorBox};
+use crate::StdErrorBox;
 
 pub const RUST_LOG: &str = "RUST_LOG";
 
@@ -45,6 +45,7 @@ pub enum LogProvider {
     Tracing,
 }
 
+#[derive(Debug)]
 pub enum Level {
     Info,
     Debug,
@@ -58,7 +59,6 @@ fn get_log_level(default_level: &Level) -> crate::Result<&Level> {
         Ok(env_level) => env_level.as_str().try_into(),
         Err(_) => Ok(default_level),
     }
-        .into_std_error()
 }
 
 impl TryFrom<&str> for &Level {
@@ -78,12 +78,6 @@ impl TryFrom<&str> for &Level {
 
 impl Display for Level {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Level::Info => write!(f, "info"),
-            Level::Debug => write!(f, "debug"),
-            Level::Error => write!(f, "error"),
-            Level::Trace => write!(f, "trace"),
-            Level::Off => write!(f, "off"),
-        }
+        write!(f, "{}", format!("{:?}", self).to_ascii_lowercase())
     }
 }

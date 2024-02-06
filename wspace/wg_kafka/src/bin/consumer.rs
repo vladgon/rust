@@ -16,7 +16,7 @@ use wg_util::common::config::rust_app::Options;
 use wg_util::Result;
 
 fn main() -> Result<()> {
-    config::rust_app::init(Options::Default)?;
+    config::rust_app::init(Options::DefaultLogNoClap)?;
     let settings = app_config::settings()?;
 
     let topic = settings.kafka.topic.to_owned();

@@ -9,7 +9,7 @@ use futures::{StreamExt, TryStreamExt};
 use log::{debug, info};
 use tracing::instrument;
 
-use Options::LogWithClap;
+use Options::LogAndClap;
 use wg_util::{Result, ResultExt};
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::Debug;
@@ -20,7 +20,7 @@ use wg_util::common::config::rust_app::Options;
 #[ctor]
 fn init() {
     spawn(|| {
-        _ = rust_app::init(LogWithClap(LogConfig::new(Tracing, &[Logger::LoggerRoot(Debug)]), false)
+        _ = rust_app::init(LogAndClap(LogConfig::new(Tracing, &[Logger::LoggerRoot(Debug)]), false)
         );
     })
         .join()

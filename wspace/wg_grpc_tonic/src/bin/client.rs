@@ -11,7 +11,7 @@ use wg_util::common::config::log::Level::{Debug, Info};
 use wg_util::common::config::log::LogProvider::Tracing;
 use wg_util::common::config::model::Grpc;
 use wg_util::common::config::rust_app;
-use wg_util::common::config::rust_app::Options::LogWithClap;
+use wg_util::common::config::rust_app::Options::LogAndClap;
 
 use crate::hello_world::helloworld::{HelloReply, HelloRequest};
 use crate::hello_world::helloworld::greeter_client::GreeterClient;
@@ -22,12 +22,12 @@ pub mod hello_world {
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
-    rust_app::init(LogWithClap(LogConfig::new(Tracing,
-                                              &[
+    rust_app::init(LogAndClap(LogConfig::new(Tracing,
+                                             &[
                                                   Logger::LoggerRoot(Info),
                                                   Logger::LoggerForModule("client", Debug)
                                               ]),
-                               false)
+                              false)
     )?;
 
     let Grpc { host, port } = &settings()?.grpc;

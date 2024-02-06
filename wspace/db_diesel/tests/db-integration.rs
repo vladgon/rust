@@ -5,16 +5,16 @@ extern crate db_diesel as db;
 mod test {
     use ctor::ctor;
     use log::debug;
-    use log::LevelFilter::Debug;
 
     use db::create_post;
     use db::util::connection::establish_connection;
     use wg_util::common::config::{app_config, rust_app};
+    use wg_util::common::config::rust_app::Options;
     use wg_util::Result;
 
     #[ctor]
     fn init() {
-        rust_app::init(Debug, false).unwrap();
+        rust_app::init(Options::DefaultLog(false)).unwrap();
     }
 
     #[test]
