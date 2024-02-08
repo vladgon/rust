@@ -24,7 +24,7 @@ pub fn init(options: Options) -> Result<()> {
     };
 
     common::config::log::init(&log_config)?;
-    let clap_pattern = Regex::new(r"-c\s|--config_files\s").unwrap();
+    let clap_pattern = Regex::new(r"-c\s|--config_files\s")?;
     let is_clap = is_clap || args().any(|arg| clap_pattern.is_match(arg.as_str()));
 
     let args = if is_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };

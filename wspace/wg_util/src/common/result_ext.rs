@@ -4,11 +4,11 @@ use crate::StdErrorBox;
 
 pub type Result<T> = std::result::Result<T, StdErrorBox>;
 
-pub trait ResultExt<T> {
+pub trait ResultExt<T, E: Into<StdErrorBox>> {
     fn into_std_error(self) -> Result<T>;
 }
 
-impl<T, E: Into<StdErrorBox>> ResultExt<T> for std::result::Result<T, E> {
+impl<T, E: Into<StdErrorBox>> ResultExt<T, E> for std::result::Result<T, E> {
     fn into_std_error(self) -> Result<T> { self.map_err(|e| e.into()) }
 }
 

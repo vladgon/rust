@@ -8,8 +8,9 @@ use config::{Config, Environment, File, FileFormat, Map, Source};
 use config::FileFormat::{Json, Json5, Toml, Yaml};
 use log::debug;
 
-use crate::{Result, ResultExt, ResultTap};
+use crate::{Result, ResultExt};
 use crate::common::config::model::Model;
+use crate::common::result_ext::ResultTap;
 
 #[derive(Default)]
 pub struct AppConfig {}
@@ -76,7 +77,7 @@ pub trait Init {
             .build()
             .map(|setting| setting.try_deserialize::<Model>().unwrap_or_else(|e| panic!("{}", e)))
             .map(|app_config| CONFIG.get_or_init(|| app_config))
-            .tap(|app_config| debug!("Processed config \n{}", serde_json::to_string_pretty(&app_config).unwrap()))
+            .tap(|app_config| debug!("Processed config\n{}", serde_json::to_string_pretty(&app_config).unwrap()))
             .into_std_error()
     }
 }

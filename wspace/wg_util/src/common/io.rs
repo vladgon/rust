@@ -4,7 +4,8 @@ use std::path::Path;
 use anyhow::Context;
 use log::debug;
 
-use crate::{Result, ResultExt, ResultTap};
+use crate::{Result, ResultExt};
+use crate::common::result_ext::ResultTap;
 
 const CARGO_MANIFEST_DIR: &str = "CARGO_MANIFEST_DIR";
 const CARGO_PKG_NAME: &str = "CARGO_PKG_NAME";

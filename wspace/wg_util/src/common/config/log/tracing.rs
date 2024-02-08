@@ -1,6 +1,6 @@
 use crate::common::config::log::Logger;
+use crate::common::result_ext::ResultTap;
 use crate::Result;
-use crate::ResultTap;
 
 pub fn init(levels: &[Logger]) -> crate::Result<()> {
     tracing_subscriber::fmt()

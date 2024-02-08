@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use log::debug;
 
 use wg_util::common::config::app_config;
-use wg_util::ResultTap;
+use wg_util::common::result_ext::ResultTap;
 
 ///
 /// Establish Connection
