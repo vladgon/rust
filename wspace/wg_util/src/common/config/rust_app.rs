@@ -1,6 +1,5 @@
 use std::env::args;
 
-use anyhow::Context;
 use log::debug;
 use regex::Regex;
 
@@ -30,7 +29,7 @@ pub fn init(options: Options) -> Result<()> {
     let args = if is_clap { AppConfigCLAP::init_clap() } else { AppConfigCLAP::default() };
     debug!("Using config files: {:?}", args.config_files);
     let files = args.config_files.split(',').collect::<Vec<_>>();
-    AppConfig::default().init_with_files(&files, args.env_override.with_context(|| "cannot process env_override")?)?;
+    AppConfig::default().init_with_files(&files, args.env_override.ok_or("cannot process env_override")?)?;
     Ok(())
 }
 
@@ -38,9 +37,11 @@ pub fn init(options: Options) -> Result<()> {
 mod test {
     use regex::Regex;
 
+    use crate::StdErrorBox;
+
     #[test]
-    fn parsing() {
-        let re = Regex::new(r"-c\s|--config_files\s").unwrap();
+    fn parsing() -> Result<(), StdErrorBox> {
+        let re = Regex::new(r"-c\s|--config_files\s")?;
 
         let value = "abc -c filename --config_files long_file_name";
         println!("Matching {value}");
@@ -58,6 +59,7 @@ mod test {
         let value = "abc -cfilename";
         println!("Not Matching {value}");
         assert!(!re.is_match(value), "Should not match {value}");
+        Ok(())
     }
 }
 

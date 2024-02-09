@@ -1,7 +1,7 @@
 use std::{env, fs};
 use std::path::Path;
 
-use anyhow::Context;
+use anyhow::anyhow;
 use log::debug;
 
 use crate::{Result, ResultExt};
@@ -27,16 +27,14 @@ pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>)
 
 pub fn cargo_work_space_home() -> Result<String> {
     env::var(CARGO_MANIFEST_DIR)
-        .with_context(|| format!("Cannot read env var {:?}", CARGO_MANIFEST_DIR))
         .tap_err(|e| debug!("{e}"))
         .map(|manifest| {
             env::var(CARGO_PKG_NAME)
-                .with_context(|| format!("Cannot read env var {:?}", CARGO_PKG_NAME))
                 .tap_err(|e| debug!("{e}"))
                 .map(|pkg_name| {
                     manifest.as_str().strip_suffix(pkg_name.as_str())
                             .map(|s| s.to_string())
-                            .with_context(|| format!("Error getting cargo home ManifestDir {manifest}, pkgName: {pkg_name}"))
+                            .ok_or(anyhow!("Error getting cargo home ManifestDir {manifest}, pkgName: {pkg_name}"))
                 })?
         })?
         .into_std_error()
