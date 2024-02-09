@@ -11,7 +11,7 @@ use wg_util::common::config::rust_app::Options;
 use wg_util::Result;
 
 fn main() -> Result<()> {
-    wg_util::common::config::rust_app::init(Options::LogWithClap(LogConfig::default(), true))?;
+    wg_util::common::config::rust_app::init(Options::LogAndClap(LogConfig::default(), true))?;
     debug!("Got Connection URL {:?}", app_config::settings()?.db.url);
     use db_diesel::schema::posts::dsl::posts;
 

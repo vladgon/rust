@@ -7,7 +7,7 @@ use tonic::{Request, Response, Status, transport::Server};
 use helloworld::{HelloReply, HelloRequest};
 use helloworld::greeter_server::Greeter;
 use helloworld::greeter_server::GreeterServer;
-use Options::LogWithClap;
+use Options::LogAndClap;
 use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::Debug;
@@ -37,11 +37,11 @@ impl Greeter for MyGreeter {
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 30)]
 async fn main() -> wg_util::Result<()> {
-    rust_app::init(LogWithClap(LogConfig::new(Tracing,
-                                              &[Logger::LoggerForModule("wg_util", Debug),
+    rust_app::init(LogAndClap(LogConfig::new(Tracing,
+                                             &[Logger::LoggerForModule("wg_util", Debug),
                                                   Logger::LoggerForModule("server", Debug)
                                               ]),
-                               false)
+                              false)
     )?;
     let Grpc { host, port } = &settings()?.grpc;
     let addr = format!("{host}:{port}").parse()?;

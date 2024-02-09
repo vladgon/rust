@@ -17,7 +17,7 @@ mod proto_generated {
 }
 
 fn main() -> wg_util::Result<()> {
-    rust_app::init(Options::Default)?;
+    rust_app::init(Options::DefaultLogNoClap)?;
 
     let shirt = Shirt {
         color: Some("Green".to_string()),

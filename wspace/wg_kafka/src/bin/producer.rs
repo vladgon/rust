@@ -10,7 +10,7 @@ use wg_util::common::config::rust_app::Options;
 use wg_util::ResultExt;
 
 fn main() -> wg_util::Result<()> {
-    config::rust_app::init(Options::Default)?;
+    config::rust_app::init(Options::DefaultLogNoClap)?;
     let settings = config::app_config::settings()?;
 
     let mut producer = wg_kafka::producer(&[settings.kafka.broker.clone()])?;

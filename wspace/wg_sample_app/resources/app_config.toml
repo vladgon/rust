@@ -1,0 +1,12 @@
+appName = "SampleApp"
+[db]
+url = "mysql://${user}:${password}@127.0.0.1:3306/sample"
+user = "vlad"
+password = "vlad"
+[kafka]
+broker = "localhost:29092"
+topic = "rust"
+pollSleep = 1000
+[grpc]
+host = "[::1]"
+port = 50051

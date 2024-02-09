@@ -7,7 +7,7 @@ members = [
     "wg_sample_app",
     "wg_kafka",
     #    "wg_proto",
-    "wg_protobuf_goog",
+    #    "wg_protobuf_goog",
     "wg_grpc_tonic",
 ]
 
@@ -35,3 +35,5 @@ prost = "0.12"
 prost-wkt = "0.5"
 prost-wkt-types = "0.5"
 tonic = "0.10"
+regex = "1.10.3"
+lazy_static = "1.4.0"

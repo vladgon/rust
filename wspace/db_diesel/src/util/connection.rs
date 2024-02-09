@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use log::debug;
 
 use wg_util::common::config::app_config;
-use wg_util::ResultTap;
+use wg_util::common::result_ext::ResultTap;
 
 ///
 /// Establish Connection
@@ -17,7 +17,7 @@ use wg_util::ResultTap;
 /// use wg_util::common::config::rust_app;
 /// /// use wg_util::common::config::rust_app;
 /// use wg_util::common::config::rust_app::Options;
-/// rust_app::init(Options::Default).unwrap();
+/// rust_app::init(Options::DefaultLogNoClap).unwrap();
 /// assert!(establish_connection().unwrap().batch_execute("Select 1").is_ok(), "Cannot get Connection");
 ///
 ///```
@@ -27,7 +27,7 @@ use wg_util::ResultTap;
 /// use wg_util::common::config::rust_app;
 /// use wg_util::common::config::log::LogConfig;
 /// use wg_util::common::config::rust_app::Options;
-/// rust_app::init(Options::Default).unwrap();
+/// rust_app::init(Options::DefaultLogNoClap).unwrap();
 /// assert_eq!(db_url().is_ok(), true)
 /// ```
 

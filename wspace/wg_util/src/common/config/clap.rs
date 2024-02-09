@@ -8,7 +8,7 @@ use crate::common::io::cargo_work_space_home;
 use crate::common::result_ext::ResultTap;
 
 /// Simple program to greet a person
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct AppConfigCLAP {
     /// wg_sample_app files list
@@ -28,16 +28,14 @@ impl AppConfigCLAP {
         Self::parse()
     }
     fn derive_path() -> String {
-        let path = cargo_work_space_home()
-            .map(|cargo_home| {
-                let path = format!("wg_sample_app/{CONFIG_FILE}");
-                let config_path = Path::new(path.as_str());
-                Path::new(cargo_home.as_str()).join(config_path)
-            })
-            .tap_err(|e| debug!("{e}, trying {:?}", CONFIG_FILE))
-            .unwrap_or_else(|_| Path::new(CONFIG_FILE).into());
-        assert!(metadata(&path).unwrap().is_file(), "File should exists");
-        path.to_str().unwrap().to_string()
+        cargo_work_space_home()
+            .map(|ref cargo_home| Path::new(cargo_home).join(format!("wg_sample_app/{CONFIG_FILE}")))
+            .tap_err(|e| debug!("trying {CONFIG_FILE}, {e}"))
+            .tap(|path| assert!(metadata(path).unwrap().is_file(), "File should exists"))
+            .unwrap_or_else(|_| CONFIG_FILE.into())
+            .to_str()
+            .unwrap()
+            .to_string()
     }
 }
 
