@@ -12,17 +12,16 @@ const CARGO_PKG_NAME: &str = "CARGO_PKG_NAME";
 
 pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> Result<()> {
     fs::create_dir_all(&destination)?;
-    fs::read_dir(source)
-        .map(|mut read_dir| read_dir
-            .try_for_each(|entry| {
-                let entry = entry?;
+    fs::read_dir(source)?
+        .try_for_each(|entry|
+            entry.map(|entry|
                 if entry.file_type()?.is_dir() {
                     copy_recursively(entry.path(), destination.as_ref().join(entry.file_name()))
                 } else {
                     _ = fs::copy(entry.path(), destination.as_ref().join(entry.file_name()));
                     Ok(())
-                }
-            }))?
+                })?
+        )
 }
 
 pub fn cargo_work_space_home() -> Result<String> {

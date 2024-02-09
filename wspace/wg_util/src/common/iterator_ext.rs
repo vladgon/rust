@@ -54,7 +54,7 @@ impl<T, I, F, _T, _E> Iterator for TapIgnoreResult<I, F>
 mod test {
     use std::sync::atomic::{AtomicUsize, Ordering};
 
-    use anyhow::{anyhow, bail};
+    use anyhow::bail;
 
     use super::*;
 
@@ -65,9 +65,8 @@ mod test {
         let counter = AtomicUsize::new(0);
         let max = 5;
         let vec = (0..max)
-            .map(|i| i)
             .tap(|i| println!("Value {}", i))
-            .tap_ignore_result(|_| Some(counter.fetch_add(1, Ordering::Relaxed)).ok_or_else(|| anyhow!("")))
+            .tap_ignore_result(|_| Some(counter.fetch_add(1, Ordering::Relaxed)).ok_or(""))
             .tap_ignore_result(|i| bail!("Error {i}") as Result<(), _>)
             .collect::<Vec<_>>();
         println!("{:?}", counter);
