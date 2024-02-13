@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    "db_diesel",
+#    "db_diesel",
     "wg_util",
-    "web_server",
-    "wg_sample_app",
-    "wg_kafka",
+#    "web_server",
+#    "wg_sample_app",
+#    "wg_kafka",
     #    "wg_proto",
     #    "wg_protobuf_goog",
     "wg_grpc_tonic",

@@ -1,13 +1,19 @@
-use std::env;
-use std::path::Path;
-use std::sync::OnceLock;
+use std::{
+    collections::HashMap,
+    env,
+    path::Path,
+    sync::OnceLock,
+};
 
 use config::{Config, Environment, File, Source};
 use log::debug;
 
-use crate::{Result, ResultExt};
-use crate::common::config::model::Model;
-use crate::common::result_ext::ResultTap;
+use crate::{
+    common::config::model::Model,
+    common::result_ext::ResultTap,
+    Result,
+    ResultExt,
+};
 
 #[derive(Default)]
 pub struct AppConfig {}
@@ -46,7 +52,7 @@ pub trait Init {
                              .fold(builder, |b, src| b.add_source(src));
 
         let builder = if env_override {
-            builder.add_source(Environment::default().source(Some(env::vars().collect())))
+            builder.add_source(Environment::default().source(Self::env_with_unix_name().ok()))
         } else { builder };
         builder
             .build()
@@ -54,5 +60,40 @@ pub trait Init {
             .map(|app_config| CONFIG.get_or_init(|| app_config))
             .tap(|app_config| debug!("Processed config\n{}", serde_json::to_string_pretty(&app_config).unwrap()))
             .into_std_error()
+    }
+    fn env_with_unix_name() -> Result<HashMap<String, String>> {
+        let pattern = regex::Regex::new(r"([a-zA-Z0-9]+?)_([a-zA-Z0-9]+?)")?;
+        let replacement = "${1}.${2}";
+        let res: HashMap<_, _> = env::vars()
+            .flat_map(|(ref k, v)| {
+                let replaced = pattern.replace_all(k, replacement);
+                vec![(k.clone(), v.clone()), (replaced.to_string(), v)]
+            })
+            .collect();
+        Ok(res)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use std::env;
+
+    use crate::StdErrorBox;
+
+    #[test]
+    fn env_prop() -> Result<(), StdErrorBox> {
+        let s: Vec<_> = env::vars().collect();
+        let pattern = regex::Regex::new(r"([a-zA-Z0-9]+?)_([a-zA-Z0-9]+?)")?;
+        let replacement = "${1}.${2}";
+        let res = pattern.replace_all("123_abc_ABC", r"${1}.${2}");
+        let _: Vec<_> = s.into_iter()
+                         .flat_map(|(ref k, v)| {
+                             let replaced = pattern.replace_all(k, replacement);
+                             vec![(k.clone(), v.clone()), (replaced.to_string(), v)]
+                         })
+                         .collect();
+
+        println!("{:?}", res);
+        Ok(())
     }
 }

@@ -1,0 +1,5 @@
+target
+.idea
+.run
+.env
+docker.sh

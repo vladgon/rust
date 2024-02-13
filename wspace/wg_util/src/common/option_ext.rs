@@ -1,6 +1,6 @@
 pub trait OptionExt<T> {
     fn tap<F: FnOnce(&T)>(self, op: F) -> Self;
-    fn tap_ignore_result<TT, F: FnOnce(&T) -> Option<TT>>(self, op: F) -> Self;
+    fn tap_ignore_result<_T, F: FnOnce(&T) -> Option<_T>>(self, op: F) -> Self;
 }
 
 
@@ -12,7 +12,7 @@ impl<T> OptionExt<T> for Option<T> {
         } else { self }
     }
 
-    fn tap_ignore_result<TT, F: FnOnce(&T) -> Option<TT>>(self, op: F) -> Self {
+    fn tap_ignore_result<_T, F: FnOnce(&T) -> Option<_T>>(self, op: F) -> Self {
         self.tap(|t| {
             _ = op(t);
         })
