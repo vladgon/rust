@@ -39,9 +39,9 @@ impl Greeter for MyGreeter {
 async fn main() -> wg_util::Result<()> {
     rust_app::init(LogAndClap(LogConfig::new(Tracing,
                                              &[Logger::LoggerForModule("wg_util", Debug),
-                                                  Logger::LoggerForModule("server", Debug)
-                                              ]),
-                              false)
+                                                 Logger::LoggerForModule("server", Debug)
+                                             ]),
+                              true)
     )?;
     let Grpc { host, port } = &settings()?.grpc;
     let addr = format!("{host}:{port}").parse()?;
