@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     pub db: DB,
     pub kafka: Kafka,
-    pub grpc: Grpc,
+    pub grpc: HostPort,
+    pub web: HostPort,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -26,7 +27,7 @@ pub struct Kafka {
 
 #[derive(Deserialize, Serialize, Debug)]
 #[allow(non_snake_case)]
-pub struct Grpc {
+pub struct HostPort {
     pub host: String,
-    pub port: String,
+    pub port: u16,
 }

@@ -4,11 +4,16 @@ use crate::common::config::log::{get_log_level, Level, Logger};
 use crate::ResultExt;
 
 pub fn init(log_level_entries: &[Logger]) -> crate::Result<()> {
-    log_level_entries.iter()
+    log_level_entries
+        .iter()
         .fold(&mut env_logger::builder(),
               |b, l| {
                   match l {
                       Logger::LoggerForModule(module, level) => b.filter_module(module, get_log_level(level).unwrap().into()),
+                      Logger::LoggerForModules(modules, level) =>
+                          modules.iter()
+                                 .fold(b, |b, module| b.filter_module(module, get_log_level(level).unwrap().into()))
+                      ,
                       Logger::LoggerRoot(level) => b.filter(None, get_log_level(level).unwrap().into())
                   }
               })

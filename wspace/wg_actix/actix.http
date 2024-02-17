@@ -1,0 +1,7 @@
+### Send POST request with json body
+POST http://127.0.0.1:8080/sayHello
+Content-Type: application/json
+
+{
+  "name": "vlad+++"
+}

@@ -9,7 +9,13 @@ members = [
     #    "wg_proto",
     #    "wg_protobuf_goog",
     "wg_grpc_tonic",
+    "wg_actix",
 ]
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+panic = "abort"
 
 [workspace.dependencies]
 wg_util = { path = "wg_util" }
