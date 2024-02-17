@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::StdErrorBox;
+pub type StdErrorBox = Box<dyn std::error::Error>;
 
 pub type Result<T> = std::result::Result<T, StdErrorBox>;
 
@@ -13,15 +13,15 @@ impl<T, E: Into<StdErrorBox>> ResultExt<T, E> for std::result::Result<T, E> {
 }
 
 pub trait ResultTap<T, E> {
-    fn tap<F: FnOnce(&T)>(self, op: F) -> Self;
+    fn tap(self, op: impl FnOnce(&T)) -> Self;
     fn tap_ignore_result<TT, EE: Debug, F: FnOnce(&T) -> std::result::Result<TT, EE>>(self, op: F) -> Self;
-    fn tap_err<F: FnOnce(&E)>(self, op: F) -> Self;
+    fn tap_err(self, op: impl FnOnce(&E)) -> Self;
     fn tap_err_ignore_result<TT, EE: Into<E>, F: FnOnce(&E) -> std::result::Result<TT, EE>>(self, op: F) -> Self;
 }
 
 
 impl<T, E> ResultTap<T, E> for std::result::Result<T, E> {
-    fn tap<F: FnOnce(&T)>(self, op: F) -> Self {
+    fn tap(self, op: impl FnOnce(&T)) -> Self {
         if let Ok(t) = &self {
             op(t);
             self
@@ -35,7 +35,7 @@ impl<T, E> ResultTap<T, E> for std::result::Result<T, E> {
     }
 
 
-    fn tap_err<F: FnOnce(&E)>(self, op: F) -> Self {
+    fn tap_err(self, op: impl FnOnce(&E)) -> Self {
         if let Err(e) = &self {
             op(e);
             self

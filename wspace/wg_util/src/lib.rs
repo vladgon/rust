@@ -1,9 +1,8 @@
-pub use common::iterator_ext::IteratorExt;
-pub use common::option_ext::OptionExt;
-pub use common::result_ext::{Result, ResultExt};
+pub use common::{
+    iterator_ext::IteratorExt,
+    option_ext::OptionExt,
+    result_ext::{Result, ResultExt, StdErrorBox},
+};
 
 pub mod common;
-
-pub type StdErrorBox = Box<dyn std::error::Error>;
-
 

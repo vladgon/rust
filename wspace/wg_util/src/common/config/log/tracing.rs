@@ -15,6 +15,11 @@ pub fn init(levels: &[Logger]) -> crate::Result<()> {
                              .map(|log_entry| {
                                  match log_entry {
                                      Logger::LoggerForModule(module, level) => format!("{module}={level}"),
+                                     Logger::LoggerForModules(modules, level) =>
+                                         modules.iter()
+                                                .map(|module| format!("{module}={level}"))
+                                                .collect::<Vec<_>>()
+                                                .join(","),
                                      Logger::LoggerRoot(level) => format!("{level}"),
                                  }
                              })

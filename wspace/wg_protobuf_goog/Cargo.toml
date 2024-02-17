@@ -5,13 +5,10 @@ edition = "2021"
 
 [dependencies]
 protobuf = "3.3.0"
-chrono = "0.4.32"
-log = "0.4.20"
+chrono = "0.4"
+log = "0.4"
 protobuf-json-mapping = "3.3.0"
 wg_util = { workspace = true }
-#tonic = { version = "0.10.2", features = [] }
-#tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
-#grpc = "0.8.3"
 
 [build-dependencies]
 protobuf-codegen = "3.3.0"

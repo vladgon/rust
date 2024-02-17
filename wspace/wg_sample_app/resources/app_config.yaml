@@ -10,3 +10,6 @@ kafka:
 grpc:
   host: "[::1]"
   port: 50051
+web:
+  host: 127.0.0.1
+  port: 8080

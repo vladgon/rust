@@ -12,6 +12,7 @@ pub enum Logger<'a> {
     LoggerRoot(Level),
     ///[&str] log module name, [Level] log level
     LoggerForModule(&'a str, Level),
+    LoggerForModules(&'a [&'a str], Level),
 }
 
 pub struct LogConfig<'a> {
@@ -24,10 +25,10 @@ impl<'a> LogConfig<'a> {
     pub fn new(kind: LogProvider, logger: &'a [Logger]) -> Self { LogConfig { kind, logger } }
 }
 
-pub fn init(log_defaults: &LogConfig) -> crate::Result<()> {
-    match log_defaults.kind {
-        LogProvider::EnvLog => env_log::init(log_defaults.logger),
-        LogProvider::Tracing => tracing::init(log_defaults.logger)
+pub fn init(log_config: &LogConfig) -> crate::Result<()> {
+    match log_config.kind {
+        LogProvider::EnvLog => env_log::init(log_config.logger),
+        LogProvider::Tracing => tracing::init(log_config.logger)
     }
 }
 

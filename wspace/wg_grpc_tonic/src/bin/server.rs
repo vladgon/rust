@@ -12,7 +12,7 @@ use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::Debug;
 use wg_util::common::config::log::LogProvider::Tracing;
-use wg_util::common::config::model::Grpc;
+use wg_util::common::config::model::HostPort;
 use wg_util::common::config::rust_app;
 use wg_util::common::config::rust_app::Options;
 use wg_util::ResultExt;
@@ -41,9 +41,9 @@ async fn main() -> wg_util::Result<()> {
                                              &[Logger::LoggerForModule("wg_util", Debug),
                                                  Logger::LoggerForModule("server", Debug)
                                              ]),
-                              true)
+                              false)
     )?;
-    let Grpc { host, port } = &settings()?.grpc;
+    let HostPort { host, port } = &settings()?.grpc;
     let addr = format!("{host}:{port}").parse()?;
     let greeter = MyGreeter::default();
 
