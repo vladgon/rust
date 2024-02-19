@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4"
+actix-files = "0.6"
 wg_util = { workspace = true }
 serde_json = { workspace = true }
 wg_grpc_tonic = { path = "../wg_grpc_tonic" }

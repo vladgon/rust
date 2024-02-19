@@ -3,7 +3,7 @@ use std::net::Ipv6Addr;
 use actix_web::{App, get, HttpResponse, HttpServer, Responder, web};
 use actix_web::middleware::Logger;
 use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
+use utoipa_swagger_ui::{Config, SwaggerUi};
 
 use app_config::settings;
 use config::log::Logger::LoggerRoot;
@@ -50,10 +50,15 @@ async fn main() -> wg_util::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(
-                SwaggerUi::new("/swagger-ui/{_:.*}")
+                SwaggerUi::new("/swagger/{_:.*}")
+                    .config(Config::default()
+                        .display_operation_id(true)
+                        .try_it_out_enabled(true))
                     .url("/api-docs/openapi.json", ApiDoc::openapi())
             )
+            .service(web::redirect("/swagger", "/swagger/index.html"))
             .wrap(Logger::default())
+            .service(actix_files::Files::new(module_path!(), module_path!()).show_files_listing())
             .service(hello)
             .service(greeter::say_hello)
             .route("/hey", web::get().to(manual_hello))
