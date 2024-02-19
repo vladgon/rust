@@ -12,9 +12,9 @@ members = [
     "wg_actix",
 ]
 [profile.release]
-strip = true
-opt-level = "z"
-lto = true
+#strip = true
+#opt-level = "z"
+#lto = true
 panic = "abort"
 
 [workspace.dependencies]
