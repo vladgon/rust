@@ -2,4 +2,4 @@ target
 .idea
 .run
 .env
-docker.sh
+docker-build.sh
