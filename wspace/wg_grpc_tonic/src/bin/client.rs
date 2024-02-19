@@ -1,10 +1,12 @@
 use std::backtrace::Backtrace;
+use std::time::SystemTime;
 
-use futures::{FutureExt, StreamExt, TryStreamExt};
+use futures::{StreamExt, TryStreamExt};
 use log::{error, info};
+use prost_wkt_types::Timestamp;
 use tonic::{Response, Status};
 
-use wg_util::{IteratorExt, ResultExt, StdErrorBox};
+use wg_util::{IteratorExt, ResultExt};
 use wg_util::common::config::app_config::settings;
 use wg_util::common::config::log::{LogConfig, Logger};
 use wg_util::common::config::log::Level::{Debug, Info};
@@ -41,19 +43,16 @@ async fn main() -> wg_util::Result<()> {
                 let request = tonic::Request::new(
                     HelloRequest {
                         name: "Tonic".into(),
+                        created_on: Timestamp::from(SystemTime::now()).into(),
                     });
-                GreeterClient::connect(format!("http://{host}:{port}"))
-                    .then(|client| async move {
-                        client.map_err(|e| Status::from_error(e.into()))?.say_hello(request).await
-                    })
-                    .map(|result| {
-                        result.tap_ignore_result(|ok| {
-                            info!("Response as Json: {}",
-                                serde_json::to_string(ok.get_ref()).map_err(|e| Status::from_error(e.into()))?);
-                            Ok::<_, StdErrorBox>(())
-                        })
-                    })
-                    .await
+                let mut client = GreeterClient::connect(format!("http://{host}:{port}")).await
+                                                                                        .map_err(|e| Status::from_error(e.into()))?;
+                client.say_hello(request).await
+                      .tap_ignore_result(|ok| {
+                          info!("Response as Json: {}",
+                              serde_json::to_string(ok.get_ref()).map_err(|e| Status::unknown(e.to_string()))?);
+                          Ok::<_, Status>(())
+                      })
             })
         })
         .buffer_unordered(50)

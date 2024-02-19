@@ -23,6 +23,8 @@ fn main() -> wg_util::Result<()> {
         }
         )
         .type_attribute(".",
+                        "#[derive(utoipa::ToSchema, utoipa::IntoParams)]")
+        .type_attribute(".",
                         "#[derive(serde::Serialize,serde::Deserialize)]")
         .extern_path(".google.protobuf.Any",
                      "::prost_wkt_types::Any")
