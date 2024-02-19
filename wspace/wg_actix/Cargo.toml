@@ -1,0 +1,18 @@
+[package]
+name = "wg_actix"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4"
+wg_util = { workspace = true }
+serde_json = { workspace = true }
+wg_grpc_tonic = { path = "../wg_grpc_tonic" }
+mime = "0.3.17"
+log = "0.4.20"
+futures-util = "0.3.30"
+anyhow = "1.0.79"
+utoipa = "4.2.0"
+utoipa-swagger-ui = { version = "6", features = ["actix-web"] }
