@@ -1,0 +1,94 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "wg_actix",
+    "description": "",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/sayHello": {
+      "post": {
+        "tags": [
+          "greeter"
+        ],
+        "operationId": "say_hello",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HelloRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "JSON file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloReply"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HelloReply": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "created_on": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/:: prost_wkt_types.Timestamp"
+              }
+            ],
+            "nullable": true
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "HelloRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Timestamp": {
+        "type": "object",
+        "required": [
+          "seconds",
+          "nanos"
+        ],
+        "properties": {
+          "nanos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  }
+}

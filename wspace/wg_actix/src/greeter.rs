@@ -11,10 +11,18 @@ pub async fn greeter_client() -> Result<GreeterClient<Channel>, wg_grpc_tonic::E
     GreeterClient::connect(format!("http://{host}:{port}")).await
 }
 
+#[utoipa::path(
+post,
+path = "/sayHello",
+request_body = HelloRequest,
+responses(
+(status = 200, description = "JSON file", body = HelloReply)
+)
+)]
 #[post("/sayHello", guard = "crate::guards::accept_json")]
 async fn say_hello(req: web::Json<HelloRequest>) -> Result<web::Json<HelloReply>, StdErrorBox> {
-    let mut client = greeter_client().await?;
-    let request = wg_grpc_tonic::Request::new(req.into_inner());
-    let res = client.say_hello(request).await?;
-    Ok(web::Json(res.into_inner()))
+    let reply = greeter_client().await?
+        .say_hello(wg_grpc_tonic::Request::new(req.into_inner())).await?
+        .into_inner();
+    Ok(web::Json(reply))
 }

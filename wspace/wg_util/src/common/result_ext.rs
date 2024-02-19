@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 pub type StdErrorBox = Box<dyn std::error::Error>;
 
 pub type Result<T> = std::result::Result<T, StdErrorBox>;
@@ -14,7 +12,7 @@ impl<T, E: Into<StdErrorBox>> ResultExt<T, E> for std::result::Result<T, E> {
 
 pub trait ResultTap<T, E> {
     fn tap(self, op: impl FnOnce(&T)) -> Self;
-    fn tap_ignore_result<TT, EE: Debug, F: FnOnce(&T) -> std::result::Result<TT, EE>>(self, op: F) -> Self;
+    fn tap_ignore_result<TT, EE: Into<E>, F: FnOnce(&T) -> std::result::Result<TT, EE>>(self, op: F) -> Self;
     fn tap_err(self, op: impl FnOnce(&E)) -> Self;
     fn tap_err_ignore_result<TT, EE: Into<E>, F: FnOnce(&E) -> std::result::Result<TT, EE>>(self, op: F) -> Self;
 }
@@ -28,12 +26,14 @@ impl<T, E> ResultTap<T, E> for std::result::Result<T, E> {
         } else { self }
     }
 
-    fn tap_ignore_result<TT, EE: Debug, F: FnOnce(&T) -> std::result::Result<TT, EE>>(self, op: F) -> Self {
-        self.tap(|t| {
-            op(t).unwrap_or_else(|ee| panic!("{:?}", ee));
-        })
+    fn tap_ignore_result<TT, EE: Into<E>, F: FnOnce(&T) -> std::result::Result<TT, EE>>(self, op: F) -> Self {
+        if let Ok(t) = &self {
+            match op(t) {
+                Ok(_) => self,
+                Err(e) => { Err(e.into()) }
+            }
+        } else { self }
     }
-
 
     fn tap_err(self, op: impl FnOnce(&E)) -> Self {
         if let Err(e) = &self {

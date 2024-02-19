@@ -26,9 +26,11 @@ pub struct MyGreeter {}
 impl Greeter for MyGreeter {
     async fn say_hello(&self, request: Request<HelloRequest>) -> Result<Response<HelloReply>, Status> {
         debug!("Got a request: {:?}", request);
+        let request = request.into_inner();
         let reply = HelloReply {
-            message: format!("Hello {}!", request.into_inner().name),
-            created_on: Timestamp::from(SystemTime::now()).into(),
+            message: format!("Hello {}!", request.name),
+            created_on: request.created_on.clone().or_else(||
+                Timestamp::from(SystemTime::now()).into()),
         };
 
         Ok(Response::new(reply))
