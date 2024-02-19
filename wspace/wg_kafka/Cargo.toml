@@ -3,6 +3,9 @@ name = "wg_kafka"
 version = "0.1.0"
 edition = "2021"
 
+[lints]
+workspace = true
+
 [dependencies]
 kafka = {version =  "0", default-features = false }
 wg_util = { workspace = true }

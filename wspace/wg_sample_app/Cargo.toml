@@ -3,6 +3,9 @@ name = "wg_sample_app"
 version = "0.1.0"
 edition = "2021"
 
+[lints]
+workspace = true
+
 [dependencies]
 wg_util = { workspace = true }
 anyhow = { workspace = true }

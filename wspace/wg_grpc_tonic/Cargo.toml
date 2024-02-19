@@ -3,6 +3,9 @@ name = "wg_grpc_tonic"
 version = "0.1.0"
 edition = "2021"
 
+[lints]
+workspace = true
+
 [dependencies]
 prost = { workspace = true }
 prost-wkt = { workspace = true }

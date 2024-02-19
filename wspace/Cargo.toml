@@ -1,3 +1,6 @@
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
 [workspace]
 resolver = "2"
 members = [
@@ -5,12 +8,13 @@ members = [
     "wg_util",
     #    "web_server",
     #    "wg_sample_app",
-    #    "wg_kafka",
+        "wg_kafka",
     #    "wg_proto",
     #    "wg_protobuf_goog",
     "wg_grpc_tonic",
     "wg_actix",
 ]
+
 [profile.release]
 #strip = true
 #opt-level = "z"
