@@ -6,13 +6,14 @@ resolver = "2"
 members = [
     #    "db_diesel",
     "wg_util",
-    #    "web_server",
+    "web_server",
     #    "wg_sample_app",
-        "wg_kafka",
+    "wg_kafka",
     #    "wg_proto",
     #    "wg_protobuf_goog",
     "wg_grpc_tonic",
     "wg_actix",
+    "wg_macro",
 ]
 
 [profile.release]

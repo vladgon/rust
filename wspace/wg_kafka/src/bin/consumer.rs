@@ -5,15 +5,14 @@ use std::sync::atomic::{AtomicI16, Ordering};
 use std::thread::sleep;
 use std::time::Duration;
 
-use kafka::consumer::MessageSet;
 use log::debug;
 
 use wg_kafka::consumer;
 use wg_kafka::model::SampleData;
+use wg_util::{IteratorExt, Result};
 use wg_util::common::config;
 use wg_util::common::config::app_config;
 use wg_util::common::config::rust_app::Options;
-use wg_util::Result;
 
 fn main() -> Result<()> {
     config::rust_app::init(Options::DefaultLogNoClap)?;
@@ -36,7 +35,7 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
         }
 
         _ = mss.iter()
-               .map(|ms| {
+               .tap(|ms| {
                    use rayon::prelude::*;
                    ms.messages()
                      .par_iter()
@@ -46,10 +45,9 @@ fn consume_messages(group: String, topic: String, brokers: &[String]) -> Result<
                         ms.partition(),
                         mes.offset,
                         serde_json::from_slice::<SampleData>(mes.value)
-                ));
-                   ms
+                ))
                })
-               .try_for_each(|ms: MessageSet| consumer.consume_messageset(ms));
+               .try_for_each(|ms| consumer.consume_messageset(ms));
         consumer.commit_consumed()?
     }
 }
